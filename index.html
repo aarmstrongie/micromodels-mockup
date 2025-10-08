@@ -172,7 +172,7 @@
 </div>
 
 <div class="main-content process-template-page-container container" id="main-content">
-  <form class="edit_process_template" id="edit_process_template_4145" action="#" method="post" onsubmit="return false;">
+  <form class="edit_process_template" id="edit_process_template_4145" action="#" method="post">
   
   <div class="row">
     <div class="form-group col-sm-6">
@@ -188,9 +188,7 @@
     <div class="form-group col-sm-2">
       <label for="process_template_group_id">Group</label>
       <select class="form-control" name="process_template[group_id]" id="process_template_group_id">
-        <option selected="selected" value="7">AAAAAAAAA</option>
-        <option value="744">AA ultimate group</option>
-      </select>
+        </select>
     </div>
 
     <div class="form-group col-3">
@@ -304,25 +302,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>Alpha Onboarding Process</td>
-                    <td>2.10</td>
-                    <td><span class="badge badge-success">Published</span></td>
-                    <td>Standard procedure for onboarding new enterprise clients.</td>
-                </tr>
-                <tr>
-                    <td>Bravo Client Follow-up</td>
-                    <td>1.50</td>
-                    <td><span class="badge badge-warning">Draft</span></td>
-                    <td>A sequence of actions for client retention and follow-up communication.</td>
-                </tr>
-                <tr>
-                    <td>Charlie Quarterly Review</td>
-                    <td>3.00</td>
-                    <td><span class="badge badge-success">Published</span></td>
-                    <td>The required process for conducting quarterly business reviews with partners.</td>
-                </tr>
-            </tbody>
+                </tbody>
         </table>
 
         <div class="mock-table-container d-none" id="historical-associations-container">
@@ -488,7 +468,6 @@
       </div>
 </div>
 
-<!-- Main Confirmation Modal (for process type change) -->
 <div class="modal fade" id="confirmChangeModal" tabindex="-1" role="dialog" aria-labelledby="confirmChangeModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -511,7 +490,29 @@
   </div>
 </div>
 
-<!-- Standard Process Template Association Modal -->
+<div class="modal fade" id="groupChangeWarningModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Warning: Group Change Will Break Associations</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p id="group-change-warning-message"></p>
+                <ul id="group-change-break-list" class="list-group">
+                    </ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-custom-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" id="confirm-group-change-btn" class="btn btn-custom-danger">Agree - Change Group</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <div class="modal fade" id="associateTemplateModal" tabindex="-1" role="dialog" aria-labelledby="associateTemplateModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-xl" role="document">
     <div class="modal-content">
@@ -523,7 +524,6 @@
       </div>
       <div class="modal-body">
         <div class="row">
-            <!-- Left Panel: Associated Templates -->
             <div class="col-md-6">
                 <div class="association-panel">
                     <div class="association-panel-content">
@@ -539,14 +539,12 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <!-- This will be populated by JavaScript -->
-                                </tbody>
+                                    </tbody>
                             </table>
                         </div>
                     </div>
                 </div>
             </div>
-            <!-- Right Panel: Available Templates -->
             <div class="col-md-6">
                 <div class="association-panel">
                     <div class="association-panel-content">
@@ -606,7 +604,6 @@
   </div>
 </div>
 
-<!-- Micro-Model Template Association Modal -->
 <div class="modal fade" id="associateMMTemplateModal" tabindex="-1" role="dialog" aria-labelledby="associateMMTemplateModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-xl" role="document">
     <div class="modal-content">
@@ -618,7 +615,6 @@
       </div>
       <div class="modal-body">
         <div class="row">
-            <!-- Left Panel: Associated Templates -->
             <div class="col-md-6">
                 <div class="association-panel">
                     <div class="association-panel-content">
@@ -634,14 +630,12 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <!-- This will be populated by JavaScript -->
-                                </tbody>
+                                    </tbody>
                             </table>
                         </div>
                     </div>
                 </div>
             </div>
-            <!-- Right Panel: Available Templates -->
             <div class="col-md-6">
                 <div class="association-panel">
                     <div class="association-panel-content">
@@ -701,6 +695,26 @@
 <script>
 $(document).ready(function() {
     
+    // --- MOCK DATA ---
+    const mockData = {
+        groups: ["Corporate", "Human Resources", "IT", "Marketing"],
+        // Added 'group' property to all templates
+        spt_associations: [
+            { id: 101, name: "Alpha Onboarding Process", version: "2.10", status: "Published", group: "Human Resources", purpose: "Standard procedure for onboarding new enterprise clients." },
+            { id: 102, name: "Bravo Client Follow-up", version: "1.50", status: "In Progress", group: "Corporate", purpose: "A sequence of actions for client retention and follow-up communication." },
+            { id: 103, name: "Charlie Quarterly Review", version: "3.00", status: "Published", group: "Corporate", purpose: "The required process for conducting quarterly business reviews with partners." }
+        ],
+        mm_associations: [
+            { id: 201, name: "Delta Sales Model", version: "1.20", status: "Published", group: "Corporate", purpose: "A micro-model for tracking outbound sales call sequences." }
+        ]
+    };
+
+    let originalGroup; // Variable to store the initial group on page load
+
+    // --- DOM ELEMENT REFERENCES ---
+    const groupSelect = $('#process_template_group_id');
+    const mainForm = $('#edit_process_template_4145');
+    
     // --- UI LOGIC ---
     function updateLayout() {
         const selectedType = $('#process_template_process_type').val();
@@ -713,8 +727,46 @@ $(document).ready(function() {
         }
     }
 
+    function populateGroups() {
+        groupSelect.empty();
+        mockData.groups.forEach(group => {
+            groupSelect.append($('<option>', { value: group, text: group }));
+        });
+        // Set initial group for the template being edited
+        originalGroup = 'Corporate';
+        groupSelect.val(originalGroup);
+    }
+    
+    function getStatusBadge(status) {
+        let badgeClass = 'badge-secondary';
+        if (status === 'Published') badgeClass = 'badge-success';
+        if (status === 'In Progress') badgeClass = 'badge-warning';
+        return `<span class="badge ${badgeClass}">${status}</span>`;
+    }
+
+    function populateAssociationTable(tableId, data) {
+        const tableBody = $(`${tableId} tbody`);
+        tableBody.empty();
+        if (!data || data.length === 0) {
+            tableBody.html('<tr><td colspan="4" class="text-center text-muted">No associations.</td></tr>');
+            return;
+        }
+        data.forEach(item => {
+            const row = $(`<tr data-id="${item.id}" data-group="${item.group}">
+                <td>${item.name}</td>
+                <td>${item.version}</td>
+                <td>${getStatusBadge(item.status)}</td>
+                <td>${item.purpose}</td>
+            </tr>`);
+            tableBody.append(row);
+        });
+    }
+
     // Initial call to set layout
     updateLayout();
+    populateGroups();
+    populateAssociationTable('#active-associations-table', mockData.spt_associations);
+    populateAssociationTable('#active-mmt-table', mockData.mm_associations);
 
     // Event listener for process type change
     $('#process_template_process_type').on('change', function() {
@@ -723,6 +775,92 @@ $(document).ready(function() {
         // We are keeping it separate from the layout change for clarity.
         updateProcessTypeView(); 
     });
+
+    // --- NEW: GROUP CHANGE LOGIC ---
+    mainForm.on('submit', function(event) {
+        event.preventDefault(); // Prevent default form submission
+        
+        const newGroup = groupSelect.val();
+
+        if (newGroup !== originalGroup) {
+            const currentType = $('#process_template_process_type').val();
+            let conflictingTemplates = [];
+            let warningMessage = '';
+            let listElement = $('#group-change-break-list');
+            listElement.empty();
+
+            if (currentType === 'Micro-Model Process Template') {
+                warningMessage = `Changing the Group of this Micro Model to <strong>${newGroup}</strong> will break all associations to the following Standard Process Templates:`;
+                $('#active-associations-table tbody tr').each(function() {
+                    const row = $(this);
+                    if (row.data('group') !== newGroup) {
+                        conflictingTemplates.push({
+                            id: row.data('id'),
+                            name: row.find('td:eq(0)').text(),
+                            version: row.find('td:eq(1)').text(),
+                            type: 'spt'
+                        });
+                    }
+                });
+            } else { // Standard Process Template
+                warningMessage = `Changing the Group of this Standard Process Template to <strong>${newGroup}</strong> will break the associations to the following Micro-Model Templates:`;
+                $('#active-mmt-table tbody tr').each(function() {
+                    const row = $(this);
+                    if (row.data('group') !== newGroup) {
+                         conflictingTemplates.push({
+                            id: row.data('id'),
+                            name: row.find('td:eq(0)').text(),
+                            version: row.find('td:eq(1)').text(),
+                            type: 'mm'
+                        });
+                    }
+                });
+            }
+
+            if (conflictingTemplates.length > 0) {
+                $('#group-change-warning-message').html(warningMessage);
+                conflictingTemplates.forEach(t => {
+                    listElement.append(`<li class="list-group-item" data-id="${t.id}" data-type="${t.type}">${t.name}, Version ${t.version}</li>`);
+                });
+                $('#groupChangeWarningModal').modal('show');
+            } else {
+                performSave(event.originalEvent.submitter);
+            }
+        } else {
+            performSave(event.originalEvent.submitter);
+        }
+    });
+
+    $('#confirm-group-change-btn').on('click', function() {
+        const newGroup = groupSelect.val();
+        $('#group-change-break-list li').each(function() {
+            const item = $(this);
+            const id = item.data('id');
+            const type = item.data('type');
+
+            // Remove from the appropriate UI table
+            if (type === 'spt') {
+                $(`#active-associations-table tbody tr[data-id="${id}"]`).remove();
+            } else {
+                $(`#active-mmt-table tbody tr[data-id="${id}"]`).remove();
+            }
+             console.log(`(Simulated) Association with ID ${id} removed. Message sent to owner. Timelines updated.`);
+        });
+
+        originalGroup = newGroup; // Update the group baseline
+        $('#groupChangeWarningModal').modal('hide');
+        performSave(); // Finalize the save
+    });
+    
+    function performSave(submitter) {
+        console.log("Save action performed.");
+        if (submitter && submitter.textContent.includes("Close")) {
+            // alert("Saved and Closed!"); // Replace with a more elegant notification
+        } else {
+            // alert("Saved!"); // Replace with a more elegant notification
+        }
+    }
+    // --- END: NEW GROUP CHANGE LOGIC ---
 
 
     /**
@@ -756,7 +894,7 @@ $(document).ready(function() {
         }
     }
     
-    // --- INITIALIZATION & EVENT LISTENERS ---
+    // --- INITIALIZATION & EVENT LISTENERS (UNCHANGED SECTION) ---
     
     let previousProcessType;
 
@@ -772,37 +910,37 @@ $(document).ready(function() {
         if (previousProcessType === 'Micro-Model Process Template' && currentProcessType === 'Standard Process Template') {
             let associationsList = '';
             $('#active-associations-table tbody tr').each(function() {
-                const name = $(this).find('td').eq(0).text();
-                const version = $(this).find('td').eq(1).text();
-                associationsList += `<li>${name}, Version ${version}</li>`;
+                // Ensure we don't pick up the placeholder text if the table is empty
+                if ($(this).find('td').length > 1) { 
+                    const name = $(this).find('td').eq(0).text();
+                    const version = $(this).find('td').eq(1).text();
+                    associationsList += `<li>${name}, Version ${version}</li>`;
+                }
             });
             
             if (associationsList.length > 0) {
-                 // Set warning text and data attribute for the modal
                  $('#modal-warning-text').text('Changing this Micro Model to a Standard Process Template will remove all associations to the following Standard Process Templates:');
                  $('#confirmChangeModal').data('table-to-clear', '#active-associations-table tbody');
                  $('#associations-list').html(associationsList);
                  $('#confirmChangeModal').modal('show');
             }
-        // START: NEW LOGIC for SPT -> MM change
         } else if (previousProcessType === 'Standard Process Template' && currentProcessType === 'Micro-Model Process Template') {
             let associationsList = '';
-            // Check the MMT table for associations
             $('#mmt-associations-tbody tr').each(function() {
-                const name = $(this).find('td').eq(0).text();
-                const version = $(this).find('td').eq(1).text();
-                associationsList += `<li>${name}, Version ${version}</li>`;
+                if ($(this).find('td').length > 1) {
+                    const name = $(this).find('td').eq(0).text();
+                    const version = $(this).find('td').eq(1).text();
+                    associationsList += `<li>${name}, Version ${version}</li>`;
+                }
             });
 
             if (associationsList.length > 0) {
-                // Set the NEW warning text and data attribute
                 $('#modal-warning-text').text('Changing this Standard Process Template to a Micro Model Template will remove all associations to the following Micro Model Templates:');
                 $('#confirmChangeModal').data('table-to-clear', '#mmt-associations-tbody');
                 $('#associations-list').html(associationsList);
                 $('#confirmChangeModal').modal('show');
             }
         }
-        // END: NEW LOGIC
     });
     
     $('#toggle-historical-btn').on('click', function() {
@@ -822,8 +960,7 @@ $(document).ready(function() {
         $('#confirmChangeModal').modal('hide');
     });
     
-    // --- STANDARD PROCESS TEMPLATE MODAL LOGIC ---
-    
+    // --- STANDARD PROCESS TEMPLATE MODAL LOGIC (UNCHANGED) ---
     $('#associateTemplateModal').on('show.bs.modal', function() {
         const modalAssociatedBody = $('#modal-active-associations-table tbody');
         modalAssociatedBody.empty();
@@ -855,8 +992,7 @@ $(document).ready(function() {
         $('#associateTemplateModal').modal('hide');
     });
 
-    // --- MICRO-MODEL TEMPLATE MODAL LOGIC ---
-    
+    // --- MICRO-MODEL TEMPLATE MODAL LOGIC (UNCHANGED) ---
     $('#associateMMTemplateModal').on('show.bs.modal', function() {
         const modalAssociatedBody = $('#modal-mm-active-associations-table tbody');
         modalAssociatedBody.empty();
@@ -888,8 +1024,6 @@ $(document).ready(function() {
         $('#associateMMTemplateModal').modal('hide');
     });
 
-
-    // --- Other template type association logic (unchanged) ---
     $('#toggle-mm-historical-btn').on('click', function() {
         $('#active-mmt-table, #mmt-historical-container').toggleClass('d-none');
     });
