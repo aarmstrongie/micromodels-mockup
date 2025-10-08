@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Process Template Mockup</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        /* Styles from original CSS provided */
+        body { font-family: 'Open Sans', sans-serif; }
+        .main-content { 
+            padding-top: 3rem; /* Restored original spacing */
+            padding-bottom: 90px; /* Provides space for the bottom nav */
+        }
+        .process-template-page-container { max-width: 1444px; margin: 0 auto; }
+        .index-bar {
+            background-color: #ffffff; /* Changed to white */
+            padding: 1rem;
+            border-bottom: none; /* Removed grey line */
+            position: sticky;
+            top: 0;
+            z-index: 1020;
+            width: 100%;
+        }
+        .form-control:disabled, .form-control[readonly] { background-color: #e9ecef; opacity: 1; }
+        
+        /* --- NEW FORM ELEMENT STYLES --- */
+        select.form-control {
+            border-radius: 20px; /* Rounded corners for dropdowns */
+            padding: 8px 20px;   /* Match button padding */
+            height: auto;        /* Allow height to adjust to padding */
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 1.25rem center;
+            background-size: 16px 12px;
+        }
+        /* The .form-control class will now default to Bootstrap's styling for text inputs and textareas */
+        
+        /* --- SIDE-BY-SIDE VIEW STYLES (FOR MODAL) --- */
+        #associateTemplateModal .modal-dialog,
+        #associateMMTemplateModal .modal-dialog {
+            max-width: 90%; /* Make modal wider */
+        }
+        .association-panel {
+            border: 1px solid #dee2e6;
+            border-radius: .25rem;
+            padding: 1.5rem;
+            height: 70vh; /* Make panels taller using viewport height */
+        }
+        .association-panel-content {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        .association-table-container {
+            flex-grow: 1;
+            overflow-y: auto; /* Allow tables to scroll if content is long */
+        }
+        /* --- END NEW STYLES --- */
+
+        .status-field { text-align: center; }
+        .bottom-nav {
+            background: #f8f9fa;
+            border-top: 1px solid #e9ecef;
+            padding: 15px 0;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            z-index: 100;
+        }
+        #bottom-nav-buffer { padding-bottom: 75px; }
+        .mock-table-container h5 { margin-top: 2rem; }
+
+        /* Tab Styles */
+        .nav-tabs {
+            border-bottom: 1px solid #dee2e6;
+        }
+        .nav-tabs .nav-link {
+            border: 1px solid transparent;
+            color: #4AA4A8; /* Teal color for inactive tabs */
+        }
+        .nav-tabs .nav-link:hover {
+            border-color: #e9ecef #e9ecef #dee2e6;
+        }
+        .nav-tabs .nav-link.active {
+            color: #212529; /* Black color for the active tab text */
+            background-color: #fff;
+            border-color: #dee2e6 #dee2e6 #fff;
+            border-top-left-radius: .25rem;
+            border-top-right-radius: .25rem;
+            font-weight: 600;
+        }
+
+        /* Button Customizations */
+        .btn {
+            border-radius: 20px;
+            padding: 8px 20px;
+            font-size: 0.9rem;
+        }
+        .btn-custom-primary {
+            background-color: #4AA4A8;
+            border-color: #4AA4A8;
+            color: #fff;
+        }
+        .btn-custom-primary:hover {
+            background-color: #3e8d90;
+            border-color: #3e8d90;
+            color: #fff;
+        }
+        .btn-custom-danger {
+            background-color: #dc3545; /* Standard Bootstrap danger color for modal */
+            border-color: #dc3545;
+            color: #fff;
+        }
+        .btn-custom-danger:hover {
+            background-color: #c82333;
+            border-color: #bd2130;
+            color: #fff;
+        }
+        .btn-custom-secondary-action { /* Specific class for action buttons */
+             background-color: #4AA4A8;
+            border-color: #4AA4A8;
+            color: #fff;
+        }
+        .btn-custom-secondary-action:hover {
+            background-color: #3e8d90;
+            border-color: #3e8d90;
+            color: #fff;
+        }
+        .btn-disabled-submit {
+            background-color: #e0e0e0;
+            border-color: #e0e0e0;
+            color: #6c757d;
+            cursor: not-allowed;
+        }
+        .btn-back-page {
+            background-color: #a0a0a0;
+            border-color: #a0a0a0;
+            color: #fff;
+        }
+        .btn-back-page:hover {
+            background-color: #8a8a8a;
+            border-color: #8a8a8a;
+            color: #fff;
+        }
+        .btn-custom-secondary {
+            background-color: #6c757d;
+            border-color: #6c757d;
+            color: #fff;
+        }
+        .btn-custom-secondary:hover {
+            background-color: #5a6268;
+            border-color: #5a6268;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+
+<div class="index-bar" id="index-bar">
+    <div class="container d-flex justify-content-between align-items-center">
+        <h3 class="mb-0">Edit: Mock</h3>
+        <div class="form-group text-right mb-0">
+            <label for="Status" class="mb-0"><small>Status</small></label>
+            <input type="text" value="Draft" class="form-control status-field" style="width: 90px;" disabled="disabled">
+        </div>
+    </div>
+</div>
+
+<div class="main-content process-template-page-container container" id="main-content">
+  <form class="edit_process_template" id="edit_process_template_4145" action="#" method="post" onsubmit="return false;">
+  
+  <div class="row">
+    <div class="form-group col-sm-6">
+      <label for="process_template_name">Name</label>
+      <input class="form-control" type="text" value="Mock" name="process_template[name]" id="process_template_name">
+    </div>
+
+      <div class="form-group col-sm-1">
+        <label for="process_template_version">Version</label>
+        <input class="form-control text-right" disabled="disabled" type="text" value="1.00" name="process_template[version]" id="process_template_version">
+      </div>
+
+    <div class="form-group col-sm-2">
+      <label for="process_template_group_id">Group</label>
+      <select class="form-control" name="process_template[group_id]" id="process_template_group_id">
+        <option selected="selected" value="7">AAAAAAAAA</option>
+        <option value="744">AA ultimate group</option>
+      </select>
+    </div>
+
+    <div class="form-group col-3">
+      <label for="process_template_tag_ids">Tag ids</label>
+      <select class="form-control" multiple="multiple" name="process_template[tag_ids][]" id="process_template_tag_ids" size="1">
+          <option>Select From Existing Options</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="form-group col-sm-3">
+        <label for="process_template_process_type">Process Type</label>
+        <select class="form-control" name="process_template[process_type]" id="process_template_process_type">
+          <option>Standard Process Template</option>
+          <option selected="selected">Micro-Model Process Template</option>
+        </select>
+    </div>
+
+    <div class="form-group col-sm-3" id="project-type-group">
+      <label for="process_template_product_type_id">Project Type</label>
+      <select class="form-control" name="process_template[product_type_id]" id="process_template_product_type_id">
+        <option selected="selected" value="3374">July 25 - v1</option>
+      </select>
+    </div>
+
+    <div class="form-group col-sm-3">
+      <label for="process_template_owner_id">Process Template Owner</label>
+      <select class="form-control" name="process_template[owner_id]" id="process_template_owner_id">
+          <option>Select an Option</option>
+      </select>
+    </div>
+  </div>
+
+    <hr class="my-4">
+
+    <ul class="nav nav-tabs" id="nav-tabList" role="tablist">
+      <li class="nav-item">
+        <a class="nav-link active" id="nav-imported-actions-tab" data-toggle="tab" href="#nav-imported-actions" role="tab" aria-controls="nav-imported-actions" aria-selected="true">
+          Imported Action Templates
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" id="nav-purpose-tab" data-toggle="tab" href="#nav-purpose" role="tab" aria-controls="nav-purpose" aria-selected="false">
+          Purpose
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" id="nav-segments-tab" data-toggle="tab" href="#nav-segments" role="tab" aria-controls="nav-segments" aria-selected="false">
+          Segments
+        </a>
+      </li>
+      <li class="nav-item" id="nav-item-spt">
+        <a class="nav-link" id="nav-associated-templates-tab" data-toggle="tab" href="#nav-associated-templates" role="tab" aria-controls="nav-associated-templates" aria-selected="false">
+          Associated Standard Process Templates
+        </a>
+      </li>
+      <li class="nav-item" id="nav-item-mmt" style="display: none;">
+        <a class="nav-link" id="nav-associated-mm-templates-tab" data-toggle="tab" href="#nav-associated-mm-templates" role="tab" aria-controls="nav-associated-mm-templates" aria-selected="false">
+          Associated Micro-Model Templates
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" id="nav-projects-tab" data-toggle="tab" href="#nav-projects" role="tab" aria-controls="nav-projects" aria-selected="false">
+          Projects
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" id="nav-timeline-tab" data-toggle="tab" href="#nav-timeline" role="tab" aria-controls="nav-timeline" aria-selected="false">
+          Timeline
+        </a>
+      </li>
+    </ul>
+
+    <div class="tab-content p-3 border border-top-0" id="nav-tabContent">
+      <div class="tab-pane fade show active" id="nav-imported-actions" role="tabpanel" aria-labelledby="nav-imported-actions-tab">
+        <p><em>Content for "Imported Action Templates" tab remains here...</em></p>
+        <div class="text-center p-5">
+            <p class="text-muted">No Actions</p>
+        </div>
+      </div>
+
+      <div class="tab-pane fade" id="nav-purpose" role="tabpanel" aria-labelledby="nav-purpose-tab">
+        <div class="mb-2">
+          <h5>Purpose:</h5>
+          <textarea class="form-control" id="process-template-purpose-area" rows="4"></textarea>
+        </div>
+      </div>
+      
+      <div class="tab-pane fade" id="nav-segments" role="tabpanel" aria-labelledby="nav-segments-tab">
+        <h5>Associated Segments</h5>
+        <p class="text-muted-color"><i>No Associated segments Yet!</i></p>
+      </div>
+
+      <div class="tab-pane fade" id="nav-associated-templates" role="tabpanel" aria-labelledby="nav-associated-templates-tab">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h4>Associated Templates</h4>
+          <div>
+            <button type="button" class="btn btn-custom-secondary" id="toggle-historical-btn"><i class="fas fa-filter mr-1"></i> Show Historical Associations</button>
+            <button type="button" class="btn btn-custom-secondary-action" id="associate-spt-btn" data-toggle="modal" data-target="#associateTemplateModal"><i class="fas fa-plus mr-1"></i> Associate Standard Process Template</button>
+          </div>
+        </div>
+        
+        <table class="table table-hover" id="active-associations-table">
+            <thead class="thead-light">
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Version</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Purpose</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Alpha Onboarding Process</td>
+                    <td>2.10</td>
+                    <td><span class="badge badge-success">Published</span></td>
+                    <td>Standard procedure for onboarding new enterprise clients.</td>
+                </tr>
+                <tr>
+                    <td>Bravo Client Follow-up</td>
+                    <td>1.50</td>
+                    <td><span class="badge badge-warning">In Progress</span></td>
+                    <td>A sequence of actions for client retention and follow-up communication.</td>
+                </tr>
+                <tr>
+                    <td>Charlie Quarterly Review</td>
+                    <td>3.00</td>
+                    <td><span class="badge badge-success">Published</span></td>
+                    <td>The required process for conducting quarterly business reviews with partners.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="mock-table-container d-none" id="historical-associations-container">
+            <h5 class="text-muted mt-4">Historical Associations</h5>
+            <table class="table table-hover">
+                <thead class="thead-light">
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Version</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Date of Status Change</th>
+                        <th scope="col">Purpose</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Delta Project Kickoff</td>
+                        <td>1.20</td>
+                        <td><span class="badge badge-danger">Archived</span></td>
+                        <td>2025-03-15</td>
+                        <td>Legacy kickoff process, now replaced by Alpha Onboarding.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+      </div>
+
+      <div class="tab-pane fade" id="nav-associated-mm-templates" role="tabpanel" aria-labelledby="nav-associated-mm-templates-tab">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h4>Associated Templates</h4>
+          <div>
+            <button type="button" class="btn btn-custom-secondary" id="toggle-mm-historical-btn"><i class="fas fa-filter mr-1"></i> Show Historical Associations</button>
+            <button type="button" class="btn btn-custom-primary" data-toggle="modal" data-target="#associateMMTemplateModal"><i class="fas fa-plus mr-1"></i> Associate Micro-Model Template</button>
+          </div>
+        </div>
+        <table class="table table-hover" id="active-mmt-table">
+            <thead class="thead-light">
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Version</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Purpose</th>
+                </tr>
+            </thead>
+            <tbody id="mmt-associations-tbody">
+                </tbody>
+        </table>
+        <div class="mock-table-container d-none" id="mmt-historical-container">
+            <h5 class="text-muted mt-4">Historical Associations</h5>
+            <table class="table table-hover">
+                <thead class="thead-light">
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Version</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Date of Disconnect</th>
+                        <th scope="col">Reason</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Kappa Test Model</td>
+                        <td>1.00</td>
+                        <td><span class="badge badge-danger">Archived</span></td>
+                        <td>2025-08-10</td>
+                        <td>Model was deprecated and replaced.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        </div>
+
+      <div class="tab-pane fade" id="nav-projects" role="tabpanel" aria-labelledby="nav-projects-tab">
+          <h4 class="m-1">No Projects are associated with Mock</h4>
+      </div>
+
+      <div class="tab-pane fade" id="nav-timeline" role="tabpanel" aria-labelledby="nav-timeline-tab">
+        <table class="table table-hover" id="timeline">
+            <thead class="thead-light">
+                <tr>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Who</th>
+                    <th>To/Role</th>
+                    <th>Subject</th>
+                    <th>Reference</th>
+                    <th><i class="fa fa-paperclip"></i></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>09/14/2025</td>
+                    <td>04:20PM WEST</td>
+                    <td>AA BLUE LIVE ADMIN</td>
+                    <td>-</td>
+                    <td>Association-Removed<br>Removed from Process Template: 'Delta Project Kickoff'<br>Reason: Process has been archived.</td>
+                    <td>Association-Removed<br>Process Template: 'Delta Project Kickoff'</td>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <td>09/14/2025</td>
+                    <td>03:15PM WEST</td>
+                    <td>AA BLUE LIVE ADMIN</td>
+                    <td>-</td>
+                    <td>Association-Added<br>Associated to Process Template: 'Alpha Onboarding Process'</td>
+                    <td>Association-Added<br>Process Template: 'Alpha Onboarding Process'</td>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <td>11/09/2025</td>
+                    <td>10:44AM EDT</td>
+                    <td>AA BLUE LIVE ADMIN</td>
+                    <td>-</td>
+                    <td>ProcessTemplate-Updated<br>Base parent added : 4145 <br></td>
+                    <td>ProcessTemplate-Updated<br>Base parent added : 4145 <br></td>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <td>11/09/2025</td>
+                    <td>10:44AM EDT</td>
+                    <td>AA BLUE LIVE ADMIN</td>
+                    <td>-</td>
+                    <td>ProcessTemplate-Created<br>Mock</td>
+                    <td>ProcessTemplate-Created<br>Mock</td>
+                    <td>-</td>
+                </tr>
+            </tbody>
+        </table>
+      </div>
+    </div>
+
+    <hr class="my-4">
+
+    <div class="row">
+      <div class="col-md-8">
+        <h4 class="text-muted h6">Mock</h4>
+      </div>
+      <div class="col-md-4 text-right">
+        <div class="edit-info" id="processtemplate_4145">
+            ID: 4145<br>
+            <span>Created 11/09/2025 10:44AM EDT AA BLUE LIVE ADMIN</span><br>
+            <span>Updated 11/09/2025 10:44AM EDT AA BLUE LIVE ADMIN</span>
+        </div>
+      </div>
+    </div>
+
+  </form>
+</div>
+
+
+<div class="bottom-nav">
+      <div class="container d-flex justify-content-between">
+            <div>
+                <button type="submit" form="edit_process_template_4145" class="btn btn-custom-secondary-action">Save</button>
+                <button type="submit" form="edit_process_template_4145" class="btn btn-custom-secondary-action">Save and Close</button>
+                <button type="button" class="btn btn-custom-secondary-action">Make a Copy</button>
+            </div>
+            <div>
+                <button type="button" class="btn btn-custom-danger">Decline</button>
+                <button type="submit" form="edit_process_template_4145" class="btn btn-disabled-submit" disabled>Submit</button>
+                <a class="btn btn-back-page" href="#">Back to Previous Page</a>
+            </div>
+      </div>
+</div>
+
+<!-- Main Confirmation Modal (for process type change) -->
+<div class="modal fade" id="confirmChangeModal" tabindex="-1" role="dialog" aria-labelledby="confirmChangeModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="confirmChangeModalLabel">Confirm Process Type Change</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p id="modal-warning-text"></p>
+        <ul id="associations-list">
+          </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-custom-secondary" data-dismiss="modal" id="cancelChangeBtn">Cancel</button>
+        <button type="button" class="btn btn-custom-danger" id="agreeAndRemoveBtn">Agree & Remove</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Standard Process Template Association Modal -->
+<div class="modal fade" id="associateTemplateModal" tabindex="-1" role="dialog" aria-labelledby="associateTemplateModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="associateTemplateModalLabel">Associate Standard Process Template</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+            <!-- Left Panel: Associated Templates -->
+            <div class="col-md-6">
+                <div class="association-panel">
+                    <div class="association-panel-content">
+                        <h5 class="mb-3">Associated Templates</h5>
+                        <div class="association-table-container">
+                            <table class="table table-hover" id="modal-active-associations-table">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th scope="col">Name</th>
+                                        <th scope="col">Version</th>
+                                        <th scope="col">Status</th>
+                                        <th scope="col">Purpose</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- This will be populated by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Right Panel: Available Templates -->
+            <div class="col-md-6">
+                <div class="association-panel">
+                    <div class="association-panel-content">
+                        <h5 class="mb-3">Available Templates to Associate</h5>
+                        <div class="mock-search-bar mb-3">
+                            <input type="text" class="form-control" placeholder="Search for a template by name or purpose...">
+                        </div>
+                        <div class="association-table-container">
+                            <table class="table table-hover" id="available-templates-table">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th style="width: 5%;"></th>
+                                        <th>Name</th>
+                                        <th>Version</th>
+                                        <th>Status</th>
+                                        <th>Purpose</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><input type="radio" name="associateSelect" value="Foxtrot Financial Audit"></td>
+                                        <td>Foxtrot Financial Audit</td>
+                                        <td>1.80</td>
+                                        <td><span class="badge badge-success">Published</span></td>
+                                        <td>A comprehensive process for annual financial auditing.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="radio" name="associateSelect" value="Golf HR Onboarding"></td>
+                                        <td>Golf HR Onboarding</td>
+                                        <td>3.20</td>
+                                        <td><span class="badge badge-success">Published</span></td>
+                                        <td>Standardized procedure for integrating new hires into the company.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="radio" name="associateSelect" value="Hotel IT Protocol"></td>
+                                        <td>Hotel IT Protocol</td>
+                                        <td>2.00</td>
+                                        <td><span class="badge badge-warning">In Progress</span></td>
+                                        <td>IT security and device management protocols for employees.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                         <div class="text-right mt-3">
+                            <button type="button" class="btn btn-custom-primary" id="confirm-association-btn" disabled>Associate Selected</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-custom-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-custom-secondary-action" id="save-associations-btn">Save Associations</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Micro-Model Template Association Modal -->
+<div class="modal fade" id="associateMMTemplateModal" tabindex="-1" role="dialog" aria-labelledby="associateMMTemplateModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="associateMMTemplateModalLabel">Associate Micro-Model Template</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+            <!-- Left Panel: Associated Templates -->
+            <div class="col-md-6">
+                <div class="association-panel">
+                    <div class="association-panel-content">
+                        <h5 class="mb-3">Associated Templates</h5>
+                        <div class="association-table-container">
+                            <table class="table table-hover" id="modal-mm-active-associations-table">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th scope="col">Name</th>
+                                        <th scope="col">Version</th>
+                                        <th scope="col">Status</th>
+                                        <th scope="col">Purpose</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- This will be populated by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Right Panel: Available Templates -->
+            <div class="col-md-6">
+                <div class="association-panel">
+                    <div class="association-panel-content">
+                        <h5 class="mb-3">Available Templates to Associate</h5>
+                        <div class="mock-search-bar mb-3">
+                            <input type="text" class="form-control" placeholder="Search for a template by name or purpose...">
+                        </div>
+                        <div class="association-table-container">
+                            <table class="table table-hover" id="mm-available-templates-table">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th style="width: 5%;"></th>
+                                        <th>Name</th>
+                                        <th>Version</th>
+                                        <th>Status</th>
+                                        <th>Purpose</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><input type="radio" name="associateMMSelect" value="Delta Sales Model"></td>
+                                        <td>Delta Sales Model</td>
+                                        <td>1.20</td>
+                                        <td><span class="badge badge-success">Published</span></td>
+                                        <td>A micro-model for tracking outbound sales call sequences.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="radio" name="associateMMSelect" value="Epsilon Support Ticket"></td>
+                                        <td>Epsilon Support Ticket</td>
+                                        <td>2.00</td>
+                                        <td><span class="badge badge-success">Published</span></td>
+                                        <td>The process for escalating Tier 1 support tickets.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                         <div class="text-right mt-3">
+                            <button type="button" class="btn btn-custom-primary" id="confirm-mm-association-btn" disabled>Associate Selected</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-custom-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-custom-secondary-action" id="save-mm-associations-btn">Save Associations</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+$(document).ready(function() {
+    
+    // --- UI LOGIC ---
+    function updateLayout() {
+        const selectedType = $('#process_template_process_type').val();
+        const projectTypeGroup = $('#project-type-group');
+
+        if (selectedType === 'Micro-Model Process Template') {
+            projectTypeGroup.hide();
+        } else {
+            projectTypeGroup.show();
+        }
+    }
+
+    // Initial call to set layout
+    updateLayout();
+
+    // Event listener for process type change
+    $('#process_template_process_type').on('change', function() {
+        updateLayout();
+        // This is where the original tab-switching logic was. 
+        // We are keeping it separate from the layout change for clarity.
+        updateProcessTypeView(); 
+    });
+
+
+    /**
+     * Updates tab visibility based on the selected Process Type.
+     */
+    function updateProcessTypeView() {
+        const selectedType = $('#process_template_process_type').val();
+        const sptTab = $('#nav-item-spt');
+        const mmtTab = $('#nav-item-mmt');
+
+        if (selectedType === 'Standard Process Template') {
+            mmtTab.show();
+            sptTab.hide();
+            
+            if (sptTab.find('a').hasClass('active')) {
+                sptTab.find('a').removeClass('active show');
+                $('#nav-associated-templates').removeClass('active show');
+                mmtTab.find('a').addClass('active show');
+                $('#nav-associated-mm-templates').addClass('active show');
+            }
+        } else { // 'Micro-Model Process Template'
+            sptTab.show();
+            mmtTab.hide();
+
+            if (mmtTab.find('a').hasClass('active')) {
+                mmtTab.find('a').removeClass('active show');
+                $('#nav-associated-mm-templates').removeClass('active show');
+                sptTab.find('a').addClass('active show');
+                $('#nav-associated-templates').addClass('active show');
+            }
+        }
+    }
+    
+    // --- INITIALIZATION & EVENT LISTENERS ---
+    
+    let previousProcessType;
+
+    updateProcessTypeView();
+
+    $('#process_template_process_type').on('focus', function () {
+        previousProcessType = this.value;
+    }).on('change', function() {
+        const currentProcessType = this.value;
+        updateProcessTypeView();
+
+        // Check for MM -> SPT change
+        if (previousProcessType === 'Micro-Model Process Template' && currentProcessType === 'Standard Process Template') {
+            let associationsList = '';
+            $('#active-associations-table tbody tr').each(function() {
+                const name = $(this).find('td').eq(0).text();
+                const version = $(this).find('td').eq(1).text();
+                associationsList += `<li>${name}, Version ${version}</li>`;
+            });
+            
+            if (associationsList.length > 0) {
+                 // Set warning text and data attribute for the modal
+                 $('#modal-warning-text').text('Changing this Micro Model to a Standard Process Template will remove all associations to the following Standard Process Templates:');
+                 $('#confirmChangeModal').data('table-to-clear', '#active-associations-table tbody');
+                 $('#associations-list').html(associationsList);
+                 $('#confirmChangeModal').modal('show');
+            }
+        // START: NEW LOGIC for SPT -> MM change
+        } else if (previousProcessType === 'Standard Process Template' && currentProcessType === 'Micro-Model Process Template') {
+            let associationsList = '';
+            // Check the MMT table for associations
+            $('#mmt-associations-tbody tr').each(function() {
+                const name = $(this).find('td').eq(0).text();
+                const version = $(this).find('td').eq(1).text();
+                associationsList += `<li>${name}, Version ${version}</li>`;
+            });
+
+            if (associationsList.length > 0) {
+                // Set the NEW warning text and data attribute
+                $('#modal-warning-text').text('Changing this Standard Process Template to a Micro Model Template will remove all associations to the following Micro Model Templates:');
+                $('#confirmChangeModal').data('table-to-clear', '#mmt-associations-tbody');
+                $('#associations-list').html(associationsList);
+                $('#confirmChangeModal').modal('show');
+            }
+        }
+        // END: NEW LOGIC
+    });
+    
+    $('#toggle-historical-btn').on('click', function() {
+        $('#active-associations-table, #historical-associations-container').toggleClass('d-none');
+    });
+
+    $('#cancelChangeBtn').on('click', function() {
+        $('#process_template_process_type').val(previousProcessType);
+        updateProcessTypeView(); 
+    });
+    
+    $('#agreeAndRemoveBtn').on('click', function() {
+        const tableToClear = $('#confirmChangeModal').data('table-to-clear');
+        if (tableToClear) {
+            $(tableToClear).html( '<tr><td colspan="4" class="text-center text-muted">Associations removed due to Process Type change.</td></tr>' );
+        }
+        $('#confirmChangeModal').modal('hide');
+    });
+    
+    // --- STANDARD PROCESS TEMPLATE MODAL LOGIC ---
+    
+    $('#associateTemplateModal').on('show.bs.modal', function() {
+        const modalAssociatedBody = $('#modal-active-associations-table tbody');
+        modalAssociatedBody.empty();
+        const mainAssociatedRows = $('#active-associations-table tbody tr').clone();
+        modalAssociatedBody.append(mainAssociatedRows);
+        $('#confirm-association-btn').prop('disabled', true);
+    });
+    
+    $('#available-templates-table tbody').on('change', 'input[name="associateSelect"]', function() {
+        $('#confirm-association-btn').prop('disabled', false);
+    });
+
+    $('#confirm-association-btn').on('click', function() {
+        const selectedRow = $('#available-templates-table tbody input[name="associateSelect"]:checked').closest('tr');
+        if (selectedRow.length > 0) {
+            const newRow = selectedRow.clone();
+            newRow.find('td:first-child').remove();
+            $('#modal-active-associations-table tbody').append(newRow);
+            selectedRow.remove();
+            $(this).prop('disabled', true);
+        }
+    });
+
+    $('#save-associations-btn').on('click', function() {
+        const mainAssociatedBody = $('#active-associations-table tbody');
+        mainAssociatedBody.empty();
+        const modalAssociatedRows = $('#modal-active-associations-table tbody tr').clone();
+        mainAssociatedBody.append(modalAssociatedRows);
+        $('#associateTemplateModal').modal('hide');
+    });
+
+    // --- MICRO-MODEL TEMPLATE MODAL LOGIC ---
+    
+    $('#associateMMTemplateModal').on('show.bs.modal', function() {
+        const modalAssociatedBody = $('#modal-mm-active-associations-table tbody');
+        modalAssociatedBody.empty();
+        const mainAssociatedRows = $('#active-mmt-table tbody tr').clone();
+        modalAssociatedBody.append(mainAssociatedRows);
+        $('#confirm-mm-association-btn').prop('disabled', true);
+    });
+    
+    $('#mm-available-templates-table tbody').on('change', 'input[name="associateMMSelect"]', function() {
+        $('#confirm-mm-association-btn').prop('disabled', false);
+    });
+
+    $('#confirm-mm-association-btn').on('click', function() {
+        const selectedRow = $('#mm-available-templates-table tbody input[name="associateMMSelect"]:checked').closest('tr');
+        if (selectedRow.length > 0) {
+            const newRow = selectedRow.clone();
+            newRow.find('td:first-child').remove();
+            $('#modal-mm-active-associations-table tbody').append(newRow);
+            selectedRow.remove();
+            $(this).prop('disabled', true);
+        }
+    });
+
+    $('#save-mm-associations-btn').on('click', function() {
+        const mainAssociatedBody = $('#active-mmt-table tbody');
+        mainAssociatedBody.empty();
+        const modalAssociatedRows = $('#modal-mm-active-associations-table tbody tr').clone();
+        mainAssociatedBody.append(modalAssociatedRows);
+        $('#associateMMTemplateModal').modal('hide');
+    });
+
+
+    // --- Other template type association logic (unchanged) ---
+    $('#toggle-mm-historical-btn').on('click', function() {
+        $('#active-mmt-table, #mmt-historical-container').toggleClass('d-none');
+    });
+});
+</script>
+
+</body>
+</html>

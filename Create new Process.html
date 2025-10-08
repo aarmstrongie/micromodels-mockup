@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create New Process Template</title>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        /* Base styles */
+        :root {
+            --bs-body-font-family: 'Open Sans', sans-serif;
+            --bs-body-font-size: 1rem;
+            --bs-body-font-weight: 400;
+            --bs-body-line-height: 1.5;
+            --bs-body-color: #212529;
+            --bs-body-bg: #fff;
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
+        html {
+            line-height: 1.15;
+            font-family: sans-serif;
+        }
+        
+        body {
+            font-family: var(--bs-body-font-family);
+            margin: 0;
+            font-size: var(--bs-body-font-size);
+            font-weight: var(--bs-body-font-weight);
+            line-height: var(--bs-body-line-height);
+            color: var(--bs-body-color);
+            background-color: var(--bs-body-bg);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .container {
+            width: 100%;
+            padding-right: 15px;
+            padding-left: 15px;
+            margin-right: auto;
+            margin-left: auto;
+        }
+        
+        .container.main-content {
+            max-width: 1100px;
+        }
+
+        .main-content {
+            padding-top: 75px;
+            padding-bottom: 120px; /* More space for bottom nav */
+        }
+        
+        h3 {
+            font-size: 2rem;
+            font-weight: 500;
+            margin-bottom: 2.5rem;
+        }
+
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            margin-right: -15px;
+            margin-left: -15px;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            padding-right: 15px;
+            padding-left: 15px;
+        }
+
+        /* Grid Columns */
+        .col-sm-6 { flex: 0 0 50%; max-width: 50%; }
+        .col-sm-2 { flex: 0 0 16.66667%; max-width: 16.66667%; }
+        .col-sm-4 { flex: 0 0 33.33333%; max-width: 33.33333%; }
+        .col-4 { flex: 0 0 33.33333%; max-width: 33.33333%; }
+
+        label {
+            display: inline-block;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        .form-control {
+            display: block;
+            width: 100%;
+            padding: .375rem .75rem;
+            font-size: 1rem;
+            font-weight: 400;
+            line-height: 1.5;
+            color: #495057;
+            background-color: #fff;
+            background-clip: padding-box;
+            border: 1px solid #ced4da;
+            border-radius: .25rem;
+            transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+            height: calc(1.5em + .75rem + 8px); /* Adjusted height for consistency */
+        }
+        
+        /* Pill shape for specific inputs */
+        .form-control.pill-shape {
+             border-radius: 20px;
+             padding: 8px 20px;
+             height: auto;
+        }
+
+        textarea.form-control {
+            height: auto;
+        }
+
+        .form-control:disabled {
+            background-color: #e9ecef;
+            opacity: 1;
+        }
+        
+        select.form-control {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 1.25rem center;
+            background-size: 16px 12px;
+        }
+
+        select[multiple].form-control {
+            background-image: none;
+            height: 120px; /* Give multi-select a decent height */
+            padding: 10px;
+        }
+
+        .padding-right_5x { padding-right: 5px; }
+        .ml-auto { margin-left: auto !important; }
+
+        /* --- BUTTON & NAV STYLES --- */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #f8f9fa;
+            border-top: 1px solid #dee2e6;
+            padding: 1rem 0;
+            z-index: 1000;
+        }
+
+        .list-inline {
+            padding-left: 0;
+            list-style: none;
+            display: flex;
+            align-items: center;
+            margin-bottom: 0;
+        }
+
+        .list-inline-item {
+            margin-right: .5rem;
+        }
+        
+        .btn {
+            display: inline-block;
+            text-align: center;
+            vertical-align: middle;
+            cursor: pointer;
+            user-select: none;
+            border: 1px solid transparent;
+            border-radius: 20px;
+            padding: 8px 20px;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            font-weight: 400;
+            text-decoration: none;
+        }
+
+        .btn-custom-secondary-action {
+            background-color: #4AA4A8;
+            border-color: #4AA4A8;
+            color: #fff;
+        }
+        .btn-custom-secondary-action:hover {
+            background-color: #3e8d90;
+            border-color: #3e8d90;
+        }
+        
+        .btn-back-page {
+            background-color: #a0a0a0;
+            border-color: #a0a0a0;
+            color: #fff;
+        }
+        .btn-back-page:hover {
+            background-color: #8a8a8a;
+            border-color: #8a8a8a;
+        }
+
+        #status-message {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #28a745;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            z-index: 1050;
+            opacity: 0;
+            transition: opacity 0.5s;
+            font-size: 0.9rem;
+        }
+        
+    </style>
+</head>
+<body>
+    <div id="status-message"></div>
+    <div class="container main-content" id="main-content">
+        <h3>Create New Process Template</h3>
+
+        <form class="new_process_template" id="new_process_template">
+            <div class="row">
+                <div class="form-group col-sm-6" id="name-field-group">
+                    <label for="template_name">Name</label>
+                    <input class="form-control" autocomplete="off" type="text" name="template_name" id="template_name" placeholder="Enter template name...">
+                </div>
+
+                <div class="form-group col-sm-2">
+                    <label for="template_group">Group</label>
+                    <select class="form-control pill-shape" name="template_group" id="template_group"></select>
+                </div>
+
+                <div class="form-group col-4">
+                    <label for="template_tags">Tag ids</label>
+                    <input class="form-control" type="text" name="template_tags" id="template_tags" placeholder="Select Some Options">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group col-sm-4">
+                    <label for="process_type">Process Type</label>
+                    <select class="form-control pill-shape" name="process_type" id="process_type"></select>
+                </div>
+                <div class="form-group col-sm-4" id="project-type-group">
+                    <label for="project_type">Project Type</label>
+                    <select class="form-control pill-shape" name="project_type" id="project_type"></select>
+                </div>
+
+                <div class="form-group col-sm-4" id="owner-group">
+                    <label for="template_owner">Process Template Owner</label>
+                    <select class="form-control pill-shape" name="template_owner" id="template_owner"></select>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group col-sm-6 ml-auto" style="margin-top: 1.5rem;">
+                    <label for="notes">Notes (Disabled)</label>
+                    <textarea name="notes" id="notes" class="form-control" disabled="disabled" rows="3"></textarea>
+                </div>
+            </div>
+
+            <div class="bottom-nav" id="bottom-nav">
+                <div class="container">
+                    <ul class="list-inline">
+                        <li class="list-inline-item">
+                            <button type="submit" name="commit" class="btn btn-custom-secondary-action">Save</button>
+                        </li>
+                        <li class="list-inline-item">
+                            <button type="submit" name="save_and_close" class="btn btn-custom-secondary-action">Save and Close</button>
+                        </li>
+                        <li class="list-inline-item ml-auto">
+                            <a class="btn btn-back-page" href="#">
+                                <i class="fas fa-undo-alt padding-right_5x"></i>Back to List
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </form>
+    </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    
+    // --- MOCK DATA ---
+    const mockData = {
+        groups: ['MTI Main', 'Sales', 'Engineering', 'Marketing', 'Support'],
+        processTypes: ['Standard Process Template', 'Micro-Model Process Template'],
+        projectTypes: {
+            'Standard Process Template': ['Standard Onboarding', 'QBR Template', 'Product Launch Plan'],
+            'Micro-Model Process Template': [] // No project types for this selection
+        },
+        owners: ['John Doe', 'Jane Smith', 'Admin User', 'Support Team']
+    };
+
+    // --- DOM ELEMENT REFERENCES ---
+    const form = document.getElementById('new_process_template');
+    const projectTypeGroup = document.getElementById('project-type-group');
+    const groupSelect = document.getElementById('template_group');
+    const processTypeSelect = document.getElementById('process_type');
+    const projectTypeSelect = document.getElementById('project_type');
+    const ownerSelect = document.getElementById('template_owner');
+    const statusMessage = document.getElementById('status-message');
+
+    // --- UTILITY FUNCTIONS ---
+    function populateSelect(selectElement, options) {
+        selectElement.innerHTML = '';
+        if (!options || options.length === 0) {
+            const option = document.createElement('option');
+            option.textContent = 'N/A';
+            selectElement.appendChild(option);
+            return;
+        }
+        options.forEach(optionText => {
+            const option = document.createElement('option');
+            option.value = optionText;
+            option.textContent = optionText;
+            selectElement.appendChild(option);
+        });
+    }
+
+    function showStatusMessage(message, duration = 3000) {
+        statusMessage.textContent = message;
+        statusMessage.style.opacity = '1';
+        setTimeout(() => {
+            statusMessage.style.opacity = '0';
+        }, duration);
+    }
+
+    // --- UI LOGIC ---
+    function updateFormLayout() {
+        const selectedProcessType = processTypeSelect.value;
+        
+        if (selectedProcessType === 'Micro-Model Process Template') {
+            projectTypeGroup.style.display = 'none';
+        } else { // 'Standard Process Template'
+            projectTypeGroup.style.display = 'block';
+        }
+        // Always update project types dropdown based on selection
+        updateProjectTypes();
+    }
+    
+    function updateProjectTypes() {
+        const selectedProcessType = processTypeSelect.value;
+        const relevantProjectTypes = mockData.projectTypes[selectedProcessType] || [];
+        populateSelect(projectTypeSelect, relevantProjectTypes);
+    }
+
+    // --- INITIAL DATA POPULATION & SETUP ---
+    populateSelect(groupSelect, mockData.groups);
+    populateSelect(processTypeSelect, mockData.processTypes);
+    populateSelect(ownerSelect, mockData.owners);
+    updateFormLayout(); // Initial call to set the correct layout
+
+    // --- EVENT LISTENERS ---
+    processTypeSelect.addEventListener('change', updateFormLayout);
+
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
+        
+        const formData = new FormData(form);
+        const data = {};
+        
+        data.template_name = formData.get('template_name');
+
+        if (projectTypeGroup.style.display !== 'none') {
+            data.project_type = formData.get('project_type');
+        }
+
+        data.template_group = formData.get('template_group');
+        const tagsValue = formData.get('template_tags');
+        data.template_tags = tagsValue ? tagsValue.split(',').map(tag => tag.trim()).filter(tag => tag) : [];
+        data.process_type = formData.get('process_type');
+        data.template_owner = formData.get('template_owner');
+
+        console.log('Form Data Submitted:', data);
+
+        const action = event.submitter.name;
+        if (action === 'save_and_close') {
+             showStatusMessage('Template saved successfully! Closing...');
+             // In a real app, you would redirect here.
+        } else {
+             showStatusMessage('Template saved successfully!');
+        }
+    });
+});
+</script>
+
+</body>
+</html>
+
