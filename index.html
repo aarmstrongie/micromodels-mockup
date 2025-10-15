@@ -9,7 +9,7 @@
     <style>
         /* Styles from original CSS provided */
         body { font-family: 'Open Sans', sans-serif; }
-        .main-content { 
+        .main-content {
             padding-top: 3rem; /* Restored original spacing */
             padding-bottom: 90px; /* Provides space for the bottom nav */
         }
@@ -24,7 +24,7 @@
             width: 100%;
         }
         .form-control:disabled, .form-control[readonly] { background-color: #e9ecef; opacity: 1; }
-        
+
         /* --- NEW FORM ELEMENT STYLES --- */
         select.form-control {
             border-radius: 20px; /* Rounded corners for dropdowns */
@@ -39,7 +39,7 @@
             background-size: 16px 12px;
         }
         /* The .form-control class will now default to Bootstrap's styling for text inputs and textareas */
-        
+
         /* --- SIDE-BY-SIDE VIEW STYLES (FOR MODAL) --- */
         #associateTemplateModal .modal-dialog,
         #associateMMTemplateModal .modal-dialog {
@@ -59,6 +59,20 @@
         .association-table-container {
             flex-grow: 1;
             overflow-y: auto; /* Allow tables to scroll if content is long */
+        }
+        /* --- END NEW STYLES --- */
+
+        /* --- NEW: Action Preview & Clickable Row Styles --- */
+        #mm-available-templates-table tbody tr {
+            cursor: pointer;
+        }
+        #mm-actions-preview-container .card-header {
+            font-weight: 600;
+            background-color: #f8f9fa;
+        }
+        #mm-actions-list {
+            max-height: 150px; /* Give a max height for scrolling if many actions */
+            overflow-y: auto;
         }
         /* --- END NEW STYLES --- */
 
@@ -173,7 +187,7 @@
 
 <div class="main-content process-template-page-container container" id="main-content">
   <form class="edit_process_template" id="edit_process_template_4145" action="#" method="post">
-  
+
   <div class="row">
     <div class="form-group col-sm-6">
       <label for="process_template_name">Name</label>
@@ -201,7 +215,7 @@
 
   <div class="row">
     <div class="form-group col-sm-3">
-        <label for="process_template_process_type">Process Type</label>
+        <label for="process_template_process_type">Process Template Type</label>
         <select class="form-control" name="process_template[process_type]" id="process_template_process_type">
           <option>Standard Process Template</option>
           <option selected="selected">Micro-Model Process Template</option>
@@ -277,7 +291,7 @@
           <textarea class="form-control" id="process-template-purpose-area" rows="4"></textarea>
         </div>
       </div>
-      
+
       <div class="tab-pane fade" id="nav-segments" role="tabpanel" aria-labelledby="nav-segments-tab">
         <h5>Associated Segments</h5>
         <p class="text-muted-color"><i>No Associated segments Yet!</i></p>
@@ -291,7 +305,7 @@
             <button type="button" class="btn btn-custom-secondary-action" id="associate-spt-btn" data-toggle="modal" data-target="#associateTemplateModal"><i class="fas fa-plus mr-1"></i> Associate Standard Process Template</button>
           </div>
         </div>
-        
+
         <table class="table table-hover" id="active-associations-table">
             <thead class="thead-light">
                 <tr>
@@ -472,7 +486,7 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="confirmChangeModalLabel">Confirm Process Type Change</h5>
+        <h5 class="modal-title" id="confirmChangeModalLabel">Confirm Process Template Type Change</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -536,6 +550,7 @@
                                         <th scope="col">Version</th>
                                         <th scope="col">Status</th>
                                         <th scope="col">Purpose</th>
+                                        <th scope="col" style="width: 10%;">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -627,6 +642,7 @@
                                         <th scope="col">Version</th>
                                         <th scope="col">Status</th>
                                         <th scope="col">Purpose</th>
+                                        <th scope="col" style="width: 10%;">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -655,24 +671,20 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td><input type="radio" name="associateMMSelect" value="Delta Sales Model"></td>
-                                        <td>Delta Sales Model</td>
-                                        <td>1.20</td>
-                                        <td><span class="badge badge-success">Published</span></td>
-                                        <td>A micro-model for tracking outbound sales call sequences.</td>
-                                    </tr>
-                                    <tr>
-                                        <td><input type="radio" name="associateMMSelect" value="Epsilon Support Ticket"></td>
-                                        <td>Epsilon Support Ticket</td>
-                                        <td>2.00</td>
-                                        <td><span class="badge badge-success">Published</span></td>
-                                        <td>The process for escalating Tier 1 support tickets.</td>
-                                    </tr>
-                                </tbody>
+                                    </tbody>
                             </table>
                         </div>
+                        <div id="mm-actions-preview-container" class="mt-3" style="display: none;">
+                            <div class="card">
+                                <div class="card-header">
+                                    Actions in Selected Micro-Model
+                                </div>
+                                <ul class="list-group list-group-flush" id="mm-actions-list">
+                                    </ul>
+                            </div>
+                        </div>
                          <div class="text-right mt-3">
+                            <button type="button" class="btn btn-custom-secondary-action" data-toggle="modal" data-target="#newMMPlaceholderModal">Create New MM</button>
                             <button type="button" class="btn btn-custom-primary" id="confirm-mm-association-btn" disabled>Associate Selected</button>
                         </div>
                     </div>
@@ -688,13 +700,33 @@
   </div>
 </div>
 
+<div class="modal fade" id="newMMPlaceholderModal" tabindex="-1" role="dialog" aria-labelledby="newMMPlaceholderModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="newMMPlaceholderModalLabel">Create New Micro-Model Template</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Create New Process Template place holder</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-custom-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
 <script>
 $(document).ready(function() {
-    
+
     // --- MOCK DATA ---
     const mockData = {
         groups: ["Corporate", "Human Resources", "IT", "Marketing"],
@@ -704,8 +736,34 @@ $(document).ready(function() {
             { id: 102, name: "Bravo Client Follow-up", version: "1.50", status: "In Progress", group: "Corporate", purpose: "A sequence of actions for client retention and follow-up communication." },
             { id: 103, name: "Charlie Quarterly Review", version: "3.00", status: "Published", group: "Corporate", purpose: "The required process for conducting quarterly business reviews with partners." }
         ],
+        // UPDATED: Added actions to MMs
         mm_associations: [
-            { id: 201, name: "Delta Sales Model", version: "1.20", status: "Published", group: "Corporate", purpose: "A micro-model for tracking outbound sales call sequences." }
+            { 
+                id: 201, 
+                name: "Delta Sales Model", 
+                version: "1.20", 
+                status: "Published", 
+                group: "Corporate", 
+                purpose: "A micro-model for tracking outbound sales call sequences.",
+                actions: [
+                    { name: 'Initial Cold Call', description: 'First contact with a new prospect to gauge interest.' },
+                    { name: 'Send Follow-up Email', description: 'Send a templated follow-up email 2 days after the initial call.' },
+                    { name: 'LinkedIn Connection Request', description: 'Send a personalized connection request to the prospect on LinkedIn.' }
+                ]
+            },
+            {
+                id: 202,
+                name: "Epsilon Support Ticket",
+                version: "2.00",
+                status: "Published",
+                group: "IT",
+                purpose: "The process for escalating Tier 1 support tickets.",
+                 actions: [
+                    { name: 'Log Ticket Details', description: 'Record all relevant information from the user support request.' },
+                    { name: 'Assign to Tier 1 Agent', description: 'Automatically assign the ticket to the next available Tier 1 support agent.' },
+                    { name: 'Initial Response SLA Check', description: 'Verify that the first response to the user occurs within the defined Service Level Agreement time.' }
+                ]
+            }
         ]
     };
 
@@ -714,7 +772,7 @@ $(document).ready(function() {
     // --- DOM ELEMENT REFERENCES ---
     const groupSelect = $('#process_template_group_id');
     const mainForm = $('#edit_process_template_4145');
-    
+
     // --- UI LOGIC ---
     function updateLayout() {
         const selectedType = $('#process_template_process_type').val();
@@ -736,7 +794,7 @@ $(document).ready(function() {
         originalGroup = 'Corporate';
         groupSelect.val(originalGroup);
     }
-    
+
     function getStatusBadge(status) {
         let badgeClass = 'badge-secondary';
         if (status === 'Published') badgeClass = 'badge-success';
@@ -762,24 +820,51 @@ $(document).ready(function() {
         });
     }
 
+    // NEW: Function to populate the available MM templates table in the modal
+    function populateAvailableMMTable() {
+        const tableBody = $('#mm-available-templates-table tbody');
+        tableBody.empty();
+        const associatedMMIds = [];
+        $('#active-mmt-table tbody tr').each(function() {
+            associatedMMIds.push($(this).data('id'));
+        });
+
+        mockData.mm_associations.forEach(item => {
+            // Only show templates that are NOT already associated
+            if (!associatedMMIds.includes(item.id)) {
+                 const row = $(`<tr data-name="${item.name}">
+                    <td><input type="radio" name="associateMMSelect" value="${item.name}"></td>
+                    <td>${item.name}</td>
+                    <td>${item.version}</td>
+                    <td>${getStatusBadge(item.status)}</td>
+                    <td>${item.purpose}</td>
+                </tr>`);
+                tableBody.append(row);
+            }
+        });
+    }
+
+
     // Initial call to set layout
     updateLayout();
     populateGroups();
     populateAssociationTable('#active-associations-table', mockData.spt_associations);
-    populateAssociationTable('#active-mmt-table', mockData.mm_associations);
+    // On page load, only one MM is associated, so let's filter the full list to show that.
+    populateAssociationTable('#active-mmt-table', mockData.mm_associations.filter(mm => mm.id === 201));
 
-    // Event listener for process type change
+
+    // Event listener for Process Template Type change
     $('#process_template_process_type').on('change', function() {
         updateLayout();
-        // This is where the original tab-switching logic was. 
+        // This is where the original tab-switching logic was.
         // We are keeping it separate from the layout change for clarity.
-        updateProcessTypeView(); 
+        updateProcessTypeView();
     });
 
     // --- NEW: GROUP CHANGE LOGIC ---
     mainForm.on('submit', function(event) {
         event.preventDefault(); // Prevent default form submission
-        
+
         const newGroup = groupSelect.val();
 
         if (newGroup !== originalGroup) {
@@ -851,7 +936,7 @@ $(document).ready(function() {
         $('#groupChangeWarningModal').modal('hide');
         performSave(); // Finalize the save
     });
-    
+
     function performSave(submitter) {
         console.log("Save action performed.");
         if (submitter && submitter.textContent.includes("Close")) {
@@ -864,7 +949,7 @@ $(document).ready(function() {
 
 
     /**
-     * Updates tab visibility based on the selected Process Type.
+     * Updates tab visibility based on the selected Process Template Type.
      */
     function updateProcessTypeView() {
         const selectedType = $('#process_template_process_type').val();
@@ -874,7 +959,7 @@ $(document).ready(function() {
         if (selectedType === 'Standard Process Template') {
             mmtTab.show();
             sptTab.hide();
-            
+
             if (sptTab.find('a').hasClass('active')) {
                 sptTab.find('a').removeClass('active show');
                 $('#nav-associated-templates').removeClass('active show');
@@ -893,9 +978,9 @@ $(document).ready(function() {
             }
         }
     }
-    
+
     // --- INITIALIZATION & EVENT LISTENERS (UNCHANGED SECTION) ---
-    
+
     let previousProcessType;
 
     updateProcessTypeView();
@@ -911,13 +996,13 @@ $(document).ready(function() {
             let associationsList = '';
             $('#active-associations-table tbody tr').each(function() {
                 // Ensure we don't pick up the placeholder text if the table is empty
-                if ($(this).find('td').length > 1) { 
+                if ($(this).find('td').length > 1) {
                     const name = $(this).find('td').eq(0).text();
                     const version = $(this).find('td').eq(1).text();
                     associationsList += `<li>${name}, Version ${version}</li>`;
                 }
             });
-            
+
             if (associationsList.length > 0) {
                  $('#modal-warning-text').text('Changing this Micro Model to a Standard Process Template will remove all associations to the following Standard Process Templates:');
                  $('#confirmChangeModal').data('table-to-clear', '#active-associations-table tbody');
@@ -942,33 +1027,40 @@ $(document).ready(function() {
             }
         }
     });
-    
+
     $('#toggle-historical-btn').on('click', function() {
         $('#active-associations-table, #historical-associations-container').toggleClass('d-none');
     });
 
     $('#cancelChangeBtn').on('click', function() {
         $('#process_template_process_type').val(previousProcessType);
-        updateProcessTypeView(); 
+        updateProcessTypeView();
     });
-    
+
     $('#agreeAndRemoveBtn').on('click', function() {
         const tableToClear = $('#confirmChangeModal').data('table-to-clear');
         if (tableToClear) {
-            $(tableToClear).html( '<tr><td colspan="4" class="text-center text-muted">Associations removed due to Process Type change.</td></tr>' );
+            $(tableToClear).html( '<tr><td colspan="4" class="text-center text-muted">Associations removed due to Process Template Type change.</td></tr>' );
         }
         $('#confirmChangeModal').modal('hide');
     });
-    
-    // --- STANDARD PROCESS TEMPLATE MODAL LOGIC (UNCHANGED) ---
+
+    // --- STANDARD PROCESS TEMPLATE MODAL LOGIC (MODIFIED) ---
     $('#associateTemplateModal').on('show.bs.modal', function() {
         const modalAssociatedBody = $('#modal-active-associations-table tbody');
         modalAssociatedBody.empty();
-        const mainAssociatedRows = $('#active-associations-table tbody tr').clone();
-        modalAssociatedBody.append(mainAssociatedRows);
+        // Clone rows and add a remove button
+        $('#active-associations-table tbody tr').each(function() {
+            if ($(this).find('td').length > 1) { // Ignore placeholder text
+                const clonedRow = $(this).clone();
+                const removeBtn = $('<td><button class="btn btn-sm btn-outline-danger remove-association-btn"><i class="fas fa-times"></i></button></td>');
+                clonedRow.append(removeBtn);
+                modalAssociatedBody.append(clonedRow);
+            }
+        });
         $('#confirm-association-btn').prop('disabled', true);
     });
-    
+
     $('#available-templates-table tbody').on('change', 'input[name="associateSelect"]', function() {
         $('#confirm-association-btn').prop('disabled', false);
     });
@@ -976,51 +1068,149 @@ $(document).ready(function() {
     $('#confirm-association-btn').on('click', function() {
         const selectedRow = $('#available-templates-table tbody input[name="associateSelect"]:checked').closest('tr');
         if (selectedRow.length > 0) {
-            const newRow = selectedRow.clone();
-            newRow.find('td:first-child').remove();
-            $('#modal-active-associations-table tbody').append(newRow);
+            const newAssociatedRow = selectedRow.clone();
+            newAssociatedRow.find('td:first-child').remove(); // Remove radio button cell
+            const removeBtn = $('<td><button class="btn btn-sm btn-outline-danger remove-association-btn"><i class="fas fa-times"></i></button></td>');
+            newAssociatedRow.append(removeBtn);
+            $('#modal-active-associations-table tbody').append(newAssociatedRow);
             selectedRow.remove();
             $(this).prop('disabled', true);
         }
+    });
+    
+    // NEW: Handle disassociation for SPT
+    $('#associateTemplateModal').on('click', '.remove-association-btn', function() {
+        const rowToRemove = $(this).closest('tr');
+        const availableTableBody = $('#available-templates-table tbody');
+        const name = rowToRemove.find('td:eq(0)').text();
+        
+        const newAvailableRow = rowToRemove.clone();
+        newAvailableRow.find('td:last-child').remove(); // Remove action button cell
+        newAvailableRow.prepend('<td><input type="radio" name="associateSelect" value="' + name + '"></td>');
+        
+        availableTableBody.append(newAvailableRow);
+        rowToRemove.remove();
     });
 
     $('#save-associations-btn').on('click', function() {
         const mainAssociatedBody = $('#active-associations-table tbody');
         mainAssociatedBody.empty();
-        const modalAssociatedRows = $('#modal-active-associations-table tbody tr').clone();
-        mainAssociatedBody.append(modalAssociatedRows);
+        $('#modal-active-associations-table tbody tr').each(function() {
+            const clonedRow = $(this).clone();
+            clonedRow.find('td:last-child').remove(); // Remove the action button cell before saving
+            mainAssociatedBody.append(clonedRow);
+        });
         $('#associateTemplateModal').modal('hide');
     });
 
-    // --- MICRO-MODEL TEMPLATE MODAL LOGIC (UNCHANGED) ---
+    // --- MICRO-MODEL TEMPLATE MODAL LOGIC (MODIFIED & NEW FEATURES) ---
     $('#associateMMTemplateModal').on('show.bs.modal', function() {
         const modalAssociatedBody = $('#modal-mm-active-associations-table tbody');
         modalAssociatedBody.empty();
-        const mainAssociatedRows = $('#active-mmt-table tbody tr').clone();
-        modalAssociatedBody.append(mainAssociatedRows);
+
+        // Populate already associated templates
+        $('#active-mmt-table tbody tr').each(function() {
+             if ($(this).find('td').length > 1) {
+                const clonedRow = $(this).clone();
+                const removeBtn = $('<td><button class="btn btn-sm btn-outline-danger remove-association-btn"><i class="fas fa-times"></i></button></td>');
+                clonedRow.append(removeBtn);
+                modalAssociatedBody.append(clonedRow);
+            }
+        });
+        
+        // Populate the table of available templates
+        populateAvailableMMTable();
+        
+        // Reset UI state for the modal
         $('#confirm-mm-association-btn').prop('disabled', true);
+        $('#mm-actions-preview-container').hide(); // Hide action preview
+        $('#mm-actions-list').empty(); // Clear action list
+        $('#mm-available-templates-table tbody tr').removeClass('table-active'); // Clear highlights
     });
-    
-    $('#mm-available-templates-table tbody').on('change', 'input[name="associateMMSelect"]', function() {
+
+    // NEW: Click on an available MM template row to preview its actions
+    $('#mm-available-templates-table tbody').on('click', 'tr', function() {
+        const radio = $(this).find('input[name="associateMMSelect"]');
+        const mmName = $(this).data('name');
+
+        // Update UI
+        radio.prop('checked', true);
         $('#confirm-mm-association-btn').prop('disabled', false);
+        $(this).addClass('table-active').siblings().removeClass('table-active');
+
+        // Find the selected MM's data
+        const selectedMM = mockData.mm_associations.find(mm => mm.name === mmName);
+        const actionList = $('#mm-actions-list');
+        actionList.empty();
+
+        // Populate and show the actions preview
+        if (selectedMM && selectedMM.actions && selectedMM.actions.length > 0) {
+            selectedMM.actions.forEach(action => {
+                actionList.append(`<li class="list-group-item"><strong>${action.name}:</strong> ${action.description}</li>`);
+            });
+            $('#mm-actions-preview-container').show();
+        } else {
+            actionList.append(`<li class="list-group-item text-muted">No actions defined for this template.</li>`);
+            $('#mm-actions-preview-container').show();
+        }
     });
+
 
     $('#confirm-mm-association-btn').on('click', function() {
         const selectedRow = $('#mm-available-templates-table tbody input[name="associateMMSelect"]:checked').closest('tr');
         if (selectedRow.length > 0) {
-            const newRow = selectedRow.clone();
-            newRow.find('td:first-child').remove();
-            $('#modal-mm-active-associations-table tbody').append(newRow);
+            const originalData = mockData.mm_associations.find(mm => mm.name === selectedRow.data('name'));
+
+            // Create a new row for the main page table from the original data
+             const mainTableRow = $(`<tr data-id="${originalData.id}" data-group="${originalData.group}">
+                <td>${originalData.name}</td>
+                <td>${originalData.version}</td>
+                <td>${getStatusBadge(originalData.status)}</td>
+                <td>${originalData.purpose}</td>
+            </tr>`);
+
+            // Add remove button for the modal view
+            const modalRow = mainTableRow.clone();
+            const removeBtn = $('<td><button class="btn btn-sm btn-outline-danger remove-association-btn"><i class="fas fa-times"></i></button></td>');
+            modalRow.append(removeBtn);
+
+            $('#modal-mm-active-associations-table tbody').append(modalRow);
+
             selectedRow.remove();
             $(this).prop('disabled', true);
+            $('#mm-actions-preview-container').hide(); // Hide preview after associating
+            $('#mm-actions-list').empty();
         }
+    });
+    
+    // NEW: Handle disassociation for MMT
+    $('#associateMMTemplateModal').on('click', '.remove-association-btn', function() {
+        const rowToRemove = $(this).closest('tr');
+        const mmId = rowToRemove.data('id');
+        const mmData = mockData.mm_associations.find(mm => mm.id === mmId);
+
+        if(mmData) {
+            const newAvailableRow = $(`<tr data-name="${mmData.name}">
+                <td><input type="radio" name="associateMMSelect" value="${mmData.name}"></td>
+                <td>${mmData.name}</td>
+                <td>${mmData.version}</td>
+                <td>${getStatusBadge(mmData.status)}</td>
+                <td>${mmData.purpose}</td>
+            </tr>`);
+            $('#mm-available-templates-table tbody').append(newAvailableRow);
+        }
+        
+        rowToRemove.remove();
     });
 
     $('#save-mm-associations-btn').on('click', function() {
         const mainAssociatedBody = $('#active-mmt-table tbody');
         mainAssociatedBody.empty();
-        const modalAssociatedRows = $('#modal-mm-active-associations-table tbody tr').clone();
-        mainAssociatedBody.append(modalAssociatedRows);
+        $('#modal-mm-active-associations-table tbody tr').each(function() {
+            const clonedRow = $(this).clone();
+            clonedRow.find('td:last-child').remove();
+            mainAssociatedBody.append(clonedRow);
+        });
         $('#associateMMTemplateModal').modal('hide');
     });
 
