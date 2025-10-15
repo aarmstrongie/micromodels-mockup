@@ -66,13 +66,46 @@
         #mm-available-templates-table tbody tr {
             cursor: pointer;
         }
-        #mm-actions-preview-container .card-header {
-            font-weight: 600;
-            background-color: #f8f9fa;
+        #mm-actions-preview-container h6 {
+            font-size: 1rem;
+            color: #495057;
+            margin-bottom: 0.75rem;
         }
-        #mm-actions-list {
-            max-height: 150px; /* Give a max height for scrolling if many actions */
-            overflow-y: auto;
+        #mm-actions-preview-table thead th {
+            font-size: 0.8rem;
+            padding: 0.5rem;
+            background-color: #f8f9fa; /* Consistent light grey */
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+        #mm-actions-preview-table tbody td {
+            font-size: 0.85rem;
+            vertical-align: middle;
+            padding: 0.5rem;
+        }
+        /* --- END NEW STYLES --- */
+
+        /* --- NEW: Imported Actions Table Style --- */
+        #imported-actions-table thead th {
+            background-color: #4AA4A8;
+            color: #fff;
+            font-weight: 600;
+        }
+        #imported-actions-table tbody td {
+            border-bottom: 1px solid #dee2e6;
+            vertical-align: middle;
+        }
+        #imported-actions-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+        #imported-actions-table a {
+            color: #4AA4A8;
+            font-weight: 600;
+        }
+        #imported-actions-table a:hover {
+            color: #3e8d90;
+            text-decoration: underline;
         }
         /* --- END NEW STYLES --- */
 
@@ -277,174 +310,194 @@
       </li>
     </ul>
 
-    <div class="tab-content p-3 border border-top-0" id="nav-tabContent">
-      <div class="tab-pane fade show active" id="nav-imported-actions" role="tabpanel" aria-labelledby="nav-imported-actions-tab">
-        <p><em>Content for "Imported Action Templates" tab remains here...</em></p>
-        <div class="text-center p-5">
-            <p class="text-muted">No Actions</p>
+    <div class="tab-content pt-0" id="nav-tabContent">
+        <div class="tab-pane fade show active" id="nav-imported-actions" role="tabpanel" aria-labelledby="nav-imported-actions-tab">
+            <table class="table" id="imported-actions-table">
+                <thead>
+                    <tr>
+                        <th style="width: 30%;">Action</th>
+                        <th>Version</th>
+                        <th>Action Type</th>
+                        <th>Assigned to</th>
+                        <th>Status</th>
+                        <th>Last Modified</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    </tbody>
+            </table>
         </div>
-      </div>
 
       <div class="tab-pane fade" id="nav-purpose" role="tabpanel" aria-labelledby="nav-purpose-tab">
-        <div class="mb-2">
+        <div class="p-3">
           <h5>Purpose:</h5>
           <textarea class="form-control" id="process-template-purpose-area" rows="4"></textarea>
         </div>
       </div>
 
       <div class="tab-pane fade" id="nav-segments" role="tabpanel" aria-labelledby="nav-segments-tab">
-        <h5>Associated Segments</h5>
-        <p class="text-muted-color"><i>No Associated segments Yet!</i></p>
+        <div class="p-3">
+            <h5>Associated Segments</h5>
+            <p class="text-muted-color"><i>No Associated segments Yet!</i></p>
+        </div>
       </div>
 
       <div class="tab-pane fade" id="nav-associated-templates" role="tabpanel" aria-labelledby="nav-associated-templates-tab">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-          <h4>Associated Templates</h4>
-          <div>
-            <button type="button" class="btn btn-custom-secondary" id="toggle-historical-btn"><i class="fas fa-filter mr-1"></i> Show Historical Associations</button>
-            <button type="button" class="btn btn-custom-secondary-action" id="associate-spt-btn" data-toggle="modal" data-target="#associateTemplateModal"><i class="fas fa-plus mr-1"></i> Associate Standard Process Template</button>
-          </div>
-        </div>
+        <div class="p-3">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4>Associated Templates</h4>
+            <div>
+                <button type="button" class="btn btn-custom-secondary" id="toggle-historical-btn"><i class="fas fa-filter mr-1"></i> Show Historical Associations</button>
+                <button type="button" class="btn btn-custom-secondary-action" id="associate-spt-btn" data-toggle="modal" data-target="#associateTemplateModal"><i class="fas fa-plus mr-1"></i> Associate Standard Process Template</button>
+            </div>
+            </div>
 
-        <table class="table table-hover" id="active-associations-table">
-            <thead class="thead-light">
-                <tr>
-                    <th scope="col">Name</th>
-                    <th scope="col">Version</th>
-                    <th scope="col">Status</th>
-                    <th scope="col">Purpose</th>
-                </tr>
-            </thead>
-            <tbody>
-                </tbody>
-        </table>
-
-        <div class="mock-table-container d-none" id="historical-associations-container">
-            <h5 class="text-muted mt-4">Historical Associations</h5>
-            <table class="table table-hover">
+            <table class="table table-hover" id="active-associations-table">
                 <thead class="thead-light">
                     <tr>
                         <th scope="col">Name</th>
                         <th scope="col">Version</th>
                         <th scope="col">Status</th>
-                        <th scope="col">Date of Status Change</th>
                         <th scope="col">Purpose</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>Delta Project Kickoff</td>
-                        <td>1.20</td>
-                        <td><span class="badge badge-danger">Archived</span></td>
-                        <td>2025-03-15</td>
-                        <td>Legacy kickoff process, now replaced by Alpha Onboarding.</td>
-                    </tr>
-                </tbody>
+                    </tbody>
             </table>
+
+            <div class="mock-table-container d-none" id="historical-associations-container">
+                <h5 class="text-muted mt-4">Historical Associations</h5>
+                <table class="table table-hover">
+                    <thead class="thead-light">
+                        <tr>
+                            <th scope="col">Name</th>
+                            <th scope="col">Version</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Date of Status Change</th>
+                            <th scope="col">Purpose</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Delta Project Kickoff</td>
+                            <td>1.20</td>
+                            <td><span class="badge badge-danger">Archived</span></td>
+                            <td>2025-03-15</td>
+                            <td>Legacy kickoff process, now replaced by Alpha Onboarding.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
       </div>
 
       <div class="tab-pane fade" id="nav-associated-mm-templates" role="tabpanel" aria-labelledby="nav-associated-mm-templates-tab">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-          <h4>Associated Templates</h4>
-          <div>
-            <button type="button" class="btn btn-custom-secondary" id="toggle-mm-historical-btn"><i class="fas fa-filter mr-1"></i> Show Historical Associations</button>
-            <button type="button" class="btn btn-custom-primary" data-toggle="modal" data-target="#associateMMTemplateModal"><i class="fas fa-plus mr-1"></i> Associate Micro-Model Template</button>
-          </div>
-        </div>
-        <table class="table table-hover" id="active-mmt-table">
-            <thead class="thead-light">
-                <tr>
-                    <th scope="col">Name</th>
-                    <th scope="col">Version</th>
-                    <th scope="col">Status</th>
-                    <th scope="col">Purpose</th>
-                </tr>
-            </thead>
-            <tbody id="mmt-associations-tbody">
-                </tbody>
-        </table>
-        <div class="mock-table-container d-none" id="mmt-historical-container">
-            <h5 class="text-muted mt-4">Historical Associations</h5>
-            <table class="table table-hover">
+        <div class="p-3">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4>Associated Templates</h4>
+            <div>
+                <button type="button" class="btn btn-custom-secondary" id="toggle-mm-historical-btn"><i class="fas fa-filter mr-1"></i> Show Historical Associations</button>
+                <button type="button" class="btn btn-custom-primary" data-toggle="modal" data-target="#associateMMTemplateModal"><i class="fas fa-plus mr-1"></i> Associate Micro-Model Template</button>
+            </div>
+            </div>
+            <table class="table table-hover" id="active-mmt-table">
                 <thead class="thead-light">
                     <tr>
                         <th scope="col">Name</th>
                         <th scope="col">Version</th>
                         <th scope="col">Status</th>
-                        <th scope="col">Date of Disconnect</th>
-                        <th scope="col">Reason</th>
+                        <th scope="col">Purpose</th>
+                    </tr>
+                </thead>
+                <tbody id="mmt-associations-tbody">
+                    </tbody>
+            </table>
+            <div class="mock-table-container d-none" id="mmt-historical-container">
+                <h5 class="text-muted mt-4">Historical Associations</h5>
+                <table class="table table-hover">
+                    <thead class="thead-light">
+                        <tr>
+                            <th scope="col">Name</th>
+                            <th scope="col">Version</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Date of Disconnect</th>
+                            <th scope="col">Reason</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Kappa Test Model</td>
+                            <td>1.00</td>
+                            <td><span class="badge badge-danger">Archived</span></td>
+                            <td>2025-08-10</td>
+                            <td>Model was deprecated and replaced.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+      <div class="tab-pane fade" id="nav-projects" role="tabpanel" aria-labelledby="nav-projects-tab">
+        <div class="p-3">
+          <h4 class="m-1">No Projects are associated with Mock</h4>
+        </div>
+      </div>
+
+      <div class="tab-pane fade" id="nav-timeline" role="tabpanel" aria-labelledby="nav-timeline-tab">
+        <div class="p-3">
+            <table class="table table-hover" id="timeline">
+                <thead class="thead-light">
+                    <tr>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Who</th>
+                        <th>To/Role</th>
+                        <th>Subject</th>
+                        <th>Reference</th>
+                        <th><i class="fa fa-paperclip"></i></th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td>Kappa Test Model</td>
-                        <td>1.00</td>
-                        <td><span class="badge badge-danger">Archived</span></td>
-                        <td>2025-08-10</td>
-                        <td>Model was deprecated and replaced.</td>
+                        <td>09/14/2025</td>
+                        <td>04:20PM WEST</td>
+                        <td>AA BLUE LIVE ADMIN</td>
+                        <td>-</td>
+                        <td>Association-Removed<br>Removed from Process Template: 'Delta Project Kickoff'<br>Reason: Process has been archived.</td>
+                        <td>Association-Removed<br>Process Template: 'Delta Project Kickoff'</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>09/14/2025</td>
+                        <td>03:15PM WEST</td>
+                        <td>AA BLUE LIVE ADMIN</td>
+                        <td>-</td>
+                        <td>Association-Added<br>Associated to Process Template: 'Alpha Onboarding Process'</td>
+                        <td>Association-Added<br>Process Template: 'Alpha Onboarding Process'</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>11/09/2025</td>
+                        <td>10:44AM EDT</td>
+                        <td>AA BLUE LIVE ADMIN</td>
+                        <td>-</td>
+                        <td>ProcessTemplate-Updated<br>Base parent added : 4145 <br></td>
+                        <td>ProcessTemplate-Updated<br>Base parent added : 4145 <br></td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>11/09/2025</td>
+                        <td>10:44AM EDT</td>
+                        <td>AA BLUE LIVE ADMIN</td>
+                        <td>-</td>
+                        <td>ProcessTemplate-Created<br>Mock</td>
+                        <td>ProcessTemplate-Created<br>Mock</td>
+                        <td>-</td>
                     </tr>
                 </tbody>
             </table>
         </div>
-        </div>
-
-      <div class="tab-pane fade" id="nav-projects" role="tabpanel" aria-labelledby="nav-projects-tab">
-          <h4 class="m-1">No Projects are associated with Mock</h4>
-      </div>
-
-      <div class="tab-pane fade" id="nav-timeline" role="tabpanel" aria-labelledby="nav-timeline-tab">
-        <table class="table table-hover" id="timeline">
-            <thead class="thead-light">
-                <tr>
-                    <th>Date</th>
-                    <th>Time</th>
-                    <th>Who</th>
-                    <th>To/Role</th>
-                    <th>Subject</th>
-                    <th>Reference</th>
-                    <th><i class="fa fa-paperclip"></i></th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>09/14/2025</td>
-                    <td>04:20PM WEST</td>
-                    <td>AA BLUE LIVE ADMIN</td>
-                    <td>-</td>
-                    <td>Association-Removed<br>Removed from Process Template: 'Delta Project Kickoff'<br>Reason: Process has been archived.</td>
-                    <td>Association-Removed<br>Process Template: 'Delta Project Kickoff'</td>
-                    <td>-</td>
-                </tr>
-                <tr>
-                    <td>09/14/2025</td>
-                    <td>03:15PM WEST</td>
-                    <td>AA BLUE LIVE ADMIN</td>
-                    <td>-</td>
-                    <td>Association-Added<br>Associated to Process Template: 'Alpha Onboarding Process'</td>
-                    <td>Association-Added<br>Process Template: 'Alpha Onboarding Process'</td>
-                    <td>-</td>
-                </tr>
-                <tr>
-                    <td>11/09/2025</td>
-                    <td>10:44AM EDT</td>
-                    <td>AA BLUE LIVE ADMIN</td>
-                    <td>-</td>
-                    <td>ProcessTemplate-Updated<br>Base parent added : 4145 <br></td>
-                    <td>ProcessTemplate-Updated<br>Base parent added : 4145 <br></td>
-                    <td>-</td>
-                </tr>
-                <tr>
-                    <td>11/09/2025</td>
-                    <td>10:44AM EDT</td>
-                    <td>AA BLUE LIVE ADMIN</td>
-                    <td>-</td>
-                    <td>ProcessTemplate-Created<br>Mock</td>
-                    <td>ProcessTemplate-Created<br>Mock</td>
-                    <td>-</td>
-                </tr>
-            </tbody>
-        </table>
       </div>
     </div>
 
@@ -675,14 +728,24 @@
                             </table>
                         </div>
                         <div id="mm-actions-preview-container" class="mt-3" style="display: none;">
-                            <div class="card">
-                                <div class="card-header">
-                                    Actions in Selected Micro-Model
-                                </div>
-                                <ul class="list-group list-group-flush" id="mm-actions-list">
-                                    </ul>
-                            </div>
-                        </div>
+                             <h6 class="font-weight-bold">Actions in Selected Micro-Model</h6>
+                             <div class="table-responsive" style="max-height: 180px;">
+                                 <table class="table table-sm" id="mm-actions-preview-table">
+                                     <thead>
+                                         <tr>
+                                             <th>Action</th>
+                                             <th>Version</th>
+                                             <th>Action Type</th>
+                                             <th>Assigned to</th>
+                                             <th>Status</th>
+                                             <th>Last Modified</th>
+                                         </tr>
+                                     </thead>
+                                     <tbody id="mm-actions-table-body">
+                                     </tbody>
+                                 </table>
+                             </div>
+                         </div>
                          <div class="text-right mt-3">
                             <button type="button" class="btn btn-custom-secondary-action" data-toggle="modal" data-target="#newMMPlaceholderModal">Create New MM</button>
                             <button type="button" class="btn btn-custom-primary" id="confirm-mm-association-btn" disabled>Associate Selected</button>
@@ -730,13 +793,11 @@ $(document).ready(function() {
     // --- MOCK DATA ---
     const mockData = {
         groups: ["Corporate", "Human Resources", "IT", "Marketing"],
-        // Added 'group' property to all templates
         spt_associations: [
             { id: 101, name: "Alpha Onboarding Process", version: "2.10", status: "Published", group: "Human Resources", purpose: "Standard procedure for onboarding new enterprise clients." },
             { id: 102, name: "Bravo Client Follow-up", version: "1.50", status: "In Progress", group: "Corporate", purpose: "A sequence of actions for client retention and follow-up communication." },
             { id: 103, name: "Charlie Quarterly Review", version: "3.00", status: "Published", group: "Corporate", purpose: "The required process for conducting quarterly business reviews with partners." }
         ],
-        // UPDATED: Added actions to MMs
         mm_associations: [
             { 
                 id: 201, 
@@ -746,9 +807,9 @@ $(document).ready(function() {
                 group: "Corporate", 
                 purpose: "A micro-model for tracking outbound sales call sequences.",
                 actions: [
-                    { name: 'Initial Cold Call', description: 'First contact with a new prospect to gauge interest.' },
-                    { name: 'Send Follow-up Email', description: 'Send a templated follow-up email 2 days after the initial call.' },
-                    { name: 'LinkedIn Connection Request', description: 'Send a personalized connection request to the prospect on LinkedIn.' }
+                    { actionId: 301, name: 'Ensure initiation of Insurance Renewal Project', version: 1, type: 'Standard', assignedTo: 'Project Manager', status: 'draft', lastModified: '10/15/2025' },
+                    { actionId: 302, name: 'Tru Up Plug rates', version: 1, type: 'Standard', assignedTo: 'Operations Specialist', status: 'draft', lastModified: '10/15/2025' },
+                    { actionId: 303, name: 'Request Emergency Contact and Contact Info Update in Employee Navigator and TPRO', version: 1, type: 'Standard', assignedTo: 'HR Manager', status: 'draft', lastModified: '10/15/2025' }
                 ]
             },
             {
@@ -759,9 +820,21 @@ $(document).ready(function() {
                 group: "IT",
                 purpose: "The process for escalating Tier 1 support tickets.",
                  actions: [
-                    { name: 'Log Ticket Details', description: 'Record all relevant information from the user support request.' },
-                    { name: 'Assign to Tier 1 Agent', description: 'Automatically assign the ticket to the next available Tier 1 support agent.' },
-                    { name: 'Initial Response SLA Check', description: 'Verify that the first response to the user occurs within the defined Service Level Agreement time.' }
+                    { actionId: 401, name: 'Prepare MTI Company Holiday for Next Year', version: 1, type: 'Standard', assignedTo: 'Operations Specialist', status: 'draft', lastModified: '10/15/2025' },
+                    { actionId: 402, name: 'Meet with the design team', version: 1, type: 'Standard', assignedTo: 'TP360 SME', status: 'submitted', lastModified: '10/15/2025' },
+                    { actionId: 403, name: 'Create WebEx space for SME and Development team', version: 1, type: 'Standard', assignedTo: 'TP360 Design Lead', status: 'submitted', lastModified: '10/15/2025' }
+                ]
+            },
+            {
+                id: 203,
+                name: "Omega Payroll Process",
+                version: "1.50",
+                status: "Published",
+                group: "Human Resources",
+                purpose: "Handles the bi-weekly payroll approval and submission process.",
+                 actions: [
+                    { actionId: 501, name: 'Approve Payroll Draft Manifest', version: 4, type: 'Standard', assignedTo: 'Operations Manager', status: 'published', lastModified: '10/01/2025' },
+                    { actionId: 502, name: 'Post Payroll Summary to QB', version: 3, type: 'Standard', assignedTo: 'Controller', status: 'published', lastModified: '10/01/2025' }
                 ]
             }
         ]
@@ -790,7 +863,6 @@ $(document).ready(function() {
         mockData.groups.forEach(group => {
             groupSelect.append($('<option>', { value: group, text: group }));
         });
-        // Set initial group for the template being edited
         originalGroup = 'Corporate';
         groupSelect.val(originalGroup);
     }
@@ -820,7 +892,27 @@ $(document).ready(function() {
         });
     }
 
-    // NEW: Function to populate the available MM templates table in the modal
+    // NEW: Function to populate the imported actions table
+    function populateImportedActionsTable(actions) {
+        const tableBody = $('#imported-actions-table tbody');
+        tableBody.empty();
+        if (!actions || actions.length === 0) {
+            tableBody.html('<tr><td colspan="6" class="text-center text-muted p-5">No Actions Imported. Associate a Micro-Model to add its actions.</td></tr>');
+            return;
+        }
+        actions.forEach(action => {
+             const row = $(`<tr data-action-id="${action.actionId}" data-parent-mm-id="${action.parentMmId}">
+                <td><a href="#">${action.name}</a></td>
+                <td>${action.version}</td>
+                <td>${action.type}</td>
+                <td>${action.assignedTo}</td>
+                <td>${action.status}</td>
+                <td>${action.lastModified}</td>
+            </tr>`);
+            tableBody.append(row);
+        });
+    }
+
     function populateAvailableMMTable() {
         const tableBody = $('#mm-available-templates-table tbody');
         tableBody.empty();
@@ -830,7 +922,6 @@ $(document).ready(function() {
         });
 
         mockData.mm_associations.forEach(item => {
-            // Only show templates that are NOT already associated
             if (!associatedMMIds.includes(item.id)) {
                  const row = $(`<tr data-name="${item.name}">
                     <td><input type="radio" name="associateMMSelect" value="${item.name}"></td>
@@ -844,27 +935,31 @@ $(document).ready(function() {
         });
     }
 
-
-    // Initial call to set layout
+    // --- INITIALIZATION ---
     updateLayout();
     populateGroups();
     populateAssociationTable('#active-associations-table', mockData.spt_associations);
-    // On page load, only one MM is associated, so let's filter the full list to show that.
-    populateAssociationTable('#active-mmt-table', mockData.mm_associations.filter(mm => mm.id === 201));
+    
+    // Initial MM association and actions
+    const initialAssociatedMMs = mockData.mm_associations.filter(mm => mm.id === 201);
+    populateAssociationTable('#active-mmt-table', initialAssociatedMMs);
+    let initialActions = [];
+    initialAssociatedMMs.forEach(mm => {
+        mm.actions.forEach(action => {
+            initialActions.push({...action, parentMmId: mm.id});
+        });
+    });
+    populateImportedActionsTable(initialActions);
 
 
-    // Event listener for Process Template Type change
+    // --- EVENT LISTENERS ---
     $('#process_template_process_type').on('change', function() {
         updateLayout();
-        // This is where the original tab-switching logic was.
-        // We are keeping it separate from the layout change for clarity.
         updateProcessTypeView();
     });
 
-    // --- NEW: GROUP CHANGE LOGIC ---
     mainForm.on('submit', function(event) {
-        event.preventDefault(); // Prevent default form submission
-
+        event.preventDefault();
         const newGroup = groupSelect.val();
 
         if (newGroup !== originalGroup) {
@@ -879,12 +974,7 @@ $(document).ready(function() {
                 $('#active-associations-table tbody tr').each(function() {
                     const row = $(this);
                     if (row.data('group') !== newGroup) {
-                        conflictingTemplates.push({
-                            id: row.data('id'),
-                            name: row.find('td:eq(0)').text(),
-                            version: row.find('td:eq(1)').text(),
-                            type: 'spt'
-                        });
+                        conflictingTemplates.push({ id: row.data('id'), name: row.find('td:eq(0)').text(), version: row.find('td:eq(1)').text(), type: 'spt' });
                     }
                 });
             } else { // Standard Process Template
@@ -892,12 +982,7 @@ $(document).ready(function() {
                 $('#active-mmt-table tbody tr').each(function() {
                     const row = $(this);
                     if (row.data('group') !== newGroup) {
-                         conflictingTemplates.push({
-                            id: row.data('id'),
-                            name: row.find('td:eq(0)').text(),
-                            version: row.find('td:eq(1)').text(),
-                            type: 'mm'
-                        });
+                         conflictingTemplates.push({ id: row.data('id'), name: row.find('td:eq(0)').text(), version: row.find('td:eq(1)').text(), type: 'mm' });
                     }
                 });
             }
@@ -923,34 +1008,23 @@ $(document).ready(function() {
             const id = item.data('id');
             const type = item.data('type');
 
-            // Remove from the appropriate UI table
             if (type === 'spt') {
                 $(`#active-associations-table tbody tr[data-id="${id}"]`).remove();
             } else {
                 $(`#active-mmt-table tbody tr[data-id="${id}"]`).remove();
             }
-             console.log(`(Simulated) Association with ID ${id} removed. Message sent to owner. Timelines updated.`);
+             console.log(`(Simulated) Association with ID ${id} removed.`);
         });
 
-        originalGroup = newGroup; // Update the group baseline
+        originalGroup = newGroup;
         $('#groupChangeWarningModal').modal('hide');
-        performSave(); // Finalize the save
+        performSave();
     });
 
     function performSave(submitter) {
         console.log("Save action performed.");
-        if (submitter && submitter.textContent.includes("Close")) {
-            // alert("Saved and Closed!"); // Replace with a more elegant notification
-        } else {
-            // alert("Saved!"); // Replace with a more elegant notification
-        }
     }
-    // --- END: NEW GROUP CHANGE LOGIC ---
 
-
-    /**
-     * Updates tab visibility based on the selected Process Template Type.
-     */
     function updateProcessTypeView() {
         const selectedType = $('#process_template_process_type').val();
         const sptTab = $('#nav-item-spt');
@@ -959,17 +1033,15 @@ $(document).ready(function() {
         if (selectedType === 'Standard Process Template') {
             mmtTab.show();
             sptTab.hide();
-
             if (sptTab.find('a').hasClass('active')) {
                 sptTab.find('a').removeClass('active show');
                 $('#nav-associated-templates').removeClass('active show');
                 mmtTab.find('a').addClass('active show');
                 $('#nav-associated-mm-templates').addClass('active show');
             }
-        } else { // 'Micro-Model Process Template'
+        } else {
             sptTab.show();
             mmtTab.hide();
-
             if (mmtTab.find('a').hasClass('active')) {
                 mmtTab.find('a').removeClass('active show');
                 $('#nav-associated-mm-templates').removeClass('active show');
@@ -979,10 +1051,7 @@ $(document).ready(function() {
         }
     }
 
-    // --- INITIALIZATION & EVENT LISTENERS (UNCHANGED SECTION) ---
-
     let previousProcessType;
-
     updateProcessTypeView();
 
     $('#process_template_process_type').on('focus', function () {
@@ -990,19 +1059,13 @@ $(document).ready(function() {
     }).on('change', function() {
         const currentProcessType = this.value;
         updateProcessTypeView();
-
-        // Check for MM -> SPT change
+        let associationsList = '';
         if (previousProcessType === 'Micro-Model Process Template' && currentProcessType === 'Standard Process Template') {
-            let associationsList = '';
             $('#active-associations-table tbody tr').each(function() {
-                // Ensure we don't pick up the placeholder text if the table is empty
                 if ($(this).find('td').length > 1) {
-                    const name = $(this).find('td').eq(0).text();
-                    const version = $(this).find('td').eq(1).text();
-                    associationsList += `<li>${name}, Version ${version}</li>`;
+                    associationsList += `<li>${$(this).find('td').eq(0).text()}, Version ${$(this).find('td').eq(1).text()}</li>`;
                 }
             });
-
             if (associationsList.length > 0) {
                  $('#modal-warning-text').text('Changing this Micro Model to a Standard Process Template will remove all associations to the following Standard Process Templates:');
                  $('#confirmChangeModal').data('table-to-clear', '#active-associations-table tbody');
@@ -1010,15 +1073,11 @@ $(document).ready(function() {
                  $('#confirmChangeModal').modal('show');
             }
         } else if (previousProcessType === 'Standard Process Template' && currentProcessType === 'Micro-Model Process Template') {
-            let associationsList = '';
             $('#mmt-associations-tbody tr').each(function() {
                 if ($(this).find('td').length > 1) {
-                    const name = $(this).find('td').eq(0).text();
-                    const version = $(this).find('td').eq(1).text();
-                    associationsList += `<li>${name}, Version ${version}</li>`;
+                    associationsList += `<li>${$(this).find('td').eq(0).text()}, Version ${$(this).find('td').eq(1).text()}</li>`;
                 }
             });
-
             if (associationsList.length > 0) {
                 $('#modal-warning-text').text('Changing this Standard Process Template to a Micro Model Template will remove all associations to the following Micro Model Templates:');
                 $('#confirmChangeModal').data('table-to-clear', '#mmt-associations-tbody');
@@ -1028,8 +1087,8 @@ $(document).ready(function() {
         }
     });
 
-    $('#toggle-historical-btn').on('click', function() {
-        $('#active-associations-table, #historical-associations-container').toggleClass('d-none');
+    $('#toggle-historical-btn, #toggle-mm-historical-btn').on('click', function() {
+        $(this).closest('.tab-pane').find('.table, .mock-table-container').toggleClass('d-none');
     });
 
     $('#cancelChangeBtn').on('click', function() {
@@ -1040,21 +1099,19 @@ $(document).ready(function() {
     $('#agreeAndRemoveBtn').on('click', function() {
         const tableToClear = $('#confirmChangeModal').data('table-to-clear');
         if (tableToClear) {
-            $(tableToClear).html( '<tr><td colspan="4" class="text-center text-muted">Associations removed due to Process Template Type change.</td></tr>' );
+            $(tableToClear).html( '<tr><td colspan="4" class="text-center text-muted">Associations removed.</td></tr>' );
         }
         $('#confirmChangeModal').modal('hide');
     });
 
-    // --- STANDARD PROCESS TEMPLATE MODAL LOGIC (MODIFIED) ---
+    // --- MODAL LOGIC ---
     $('#associateTemplateModal').on('show.bs.modal', function() {
         const modalAssociatedBody = $('#modal-active-associations-table tbody');
         modalAssociatedBody.empty();
-        // Clone rows and add a remove button
         $('#active-associations-table tbody tr').each(function() {
-            if ($(this).find('td').length > 1) { // Ignore placeholder text
+            if ($(this).find('td').length > 1) {
                 const clonedRow = $(this).clone();
-                const removeBtn = $('<td><button class="btn btn-sm btn-outline-danger remove-association-btn"><i class="fas fa-times"></i></button></td>');
-                clonedRow.append(removeBtn);
+                clonedRow.append('<td><button class="btn btn-sm btn-outline-danger remove-association-btn"><i class="fas fa-times"></i></button></td>');
                 modalAssociatedBody.append(clonedRow);
             }
         });
@@ -1069,25 +1126,21 @@ $(document).ready(function() {
         const selectedRow = $('#available-templates-table tbody input[name="associateSelect"]:checked').closest('tr');
         if (selectedRow.length > 0) {
             const newAssociatedRow = selectedRow.clone();
-            newAssociatedRow.find('td:first-child').remove(); // Remove radio button cell
-            const removeBtn = $('<td><button class="btn btn-sm btn-outline-danger remove-association-btn"><i class="fas fa-times"></i></button></td>');
-            newAssociatedRow.append(removeBtn);
+            newAssociatedRow.find('td:first-child').remove();
+            newAssociatedRow.append('<td><button class="btn btn-sm btn-outline-danger remove-association-btn"><i class="fas fa-times"></i></button></td>');
             $('#modal-active-associations-table tbody').append(newAssociatedRow);
             selectedRow.remove();
             $(this).prop('disabled', true);
         }
     });
     
-    // NEW: Handle disassociation for SPT
     $('#associateTemplateModal').on('click', '.remove-association-btn', function() {
         const rowToRemove = $(this).closest('tr');
         const availableTableBody = $('#available-templates-table tbody');
         const name = rowToRemove.find('td:eq(0)').text();
-        
         const newAvailableRow = rowToRemove.clone();
-        newAvailableRow.find('td:last-child').remove(); // Remove action button cell
+        newAvailableRow.find('td:last-child').remove();
         newAvailableRow.prepend('<td><input type="radio" name="associateSelect" value="' + name + '"></td>');
-        
         availableTableBody.append(newAvailableRow);
         rowToRemove.remove();
     });
@@ -1097,98 +1150,79 @@ $(document).ready(function() {
         mainAssociatedBody.empty();
         $('#modal-active-associations-table tbody tr').each(function() {
             const clonedRow = $(this).clone();
-            clonedRow.find('td:last-child').remove(); // Remove the action button cell before saving
+            clonedRow.find('td:last-child').remove();
             mainAssociatedBody.append(clonedRow);
         });
         $('#associateTemplateModal').modal('hide');
     });
 
-    // --- MICRO-MODEL TEMPLATE MODAL LOGIC (MODIFIED & NEW FEATURES) ---
     $('#associateMMTemplateModal').on('show.bs.modal', function() {
         const modalAssociatedBody = $('#modal-mm-active-associations-table tbody');
         modalAssociatedBody.empty();
-
-        // Populate already associated templates
         $('#active-mmt-table tbody tr').each(function() {
              if ($(this).find('td').length > 1) {
                 const clonedRow = $(this).clone();
-                const removeBtn = $('<td><button class="btn btn-sm btn-outline-danger remove-association-btn"><i class="fas fa-times"></i></button></td>');
-                clonedRow.append(removeBtn);
+                clonedRow.append('<td><button class="btn btn-sm btn-outline-danger remove-association-btn"><i class="fas fa-times"></i></button></td>');
                 modalAssociatedBody.append(clonedRow);
             }
         });
-        
-        // Populate the table of available templates
         populateAvailableMMTable();
-        
-        // Reset UI state for the modal
         $('#confirm-mm-association-btn').prop('disabled', true);
-        $('#mm-actions-preview-container').hide(); // Hide action preview
-        $('#mm-actions-list').empty(); // Clear action list
-        $('#mm-available-templates-table tbody tr').removeClass('table-active'); // Clear highlights
+        $('#mm-actions-preview-container').hide();
+        $('#mm-actions-table-body').empty();
+        $('#mm-available-templates-table tbody tr').removeClass('table-active');
     });
 
-    // NEW: Click on an available MM template row to preview its actions
     $('#mm-available-templates-table tbody').on('click', 'tr', function() {
-        const radio = $(this).find('input[name="associateMMSelect"]');
-        const mmName = $(this).data('name');
-
-        // Update UI
-        radio.prop('checked', true);
+        $(this).find('input[name="associateMMSelect"]').prop('checked', true);
         $('#confirm-mm-association-btn').prop('disabled', false);
         $(this).addClass('table-active').siblings().removeClass('table-active');
-
-        // Find the selected MM's data
+        const mmName = $(this).data('name');
         const selectedMM = mockData.mm_associations.find(mm => mm.name === mmName);
-        const actionList = $('#mm-actions-list');
-        actionList.empty();
+        const actionTableBody = $('#mm-actions-table-body');
+        actionTableBody.empty();
 
-        // Populate and show the actions preview
         if (selectedMM && selectedMM.actions && selectedMM.actions.length > 0) {
             selectedMM.actions.forEach(action => {
-                actionList.append(`<li class="list-group-item"><strong>${action.name}:</strong> ${action.description}</li>`);
+                const row = `<tr>
+                    <td>${action.name}</td>
+                    <td>${action.version}</td>
+                    <td>${action.type}</td>
+                    <td>${action.assignedTo}</td>
+                    <td>${action.status}</td>
+                    <td>${action.lastModified}</td>
+                </tr>`;
+                actionTableBody.append(row);
             });
-            $('#mm-actions-preview-container').show();
         } else {
-            actionList.append(`<li class="list-group-item text-muted">No actions defined for this template.</li>`);
-            $('#mm-actions-preview-container').show();
+            actionTableBody.append(`<tr><td colspan="6" class="text-center text-muted">No actions defined.</td></tr>`);
         }
+        $('#mm-actions-preview-container').show();
     });
-
 
     $('#confirm-mm-association-btn').on('click', function() {
         const selectedRow = $('#mm-available-templates-table tbody input[name="associateMMSelect"]:checked').closest('tr');
         if (selectedRow.length > 0) {
-            const originalData = mockData.mm_associations.find(mm => mm.name === selectedRow.data('name'));
-
-            // Create a new row for the main page table from the original data
-             const mainTableRow = $(`<tr data-id="${originalData.id}" data-group="${originalData.group}">
+            const mmName = selectedRow.data('name');
+            const originalData = mockData.mm_associations.find(mm => mm.name === mmName);
+            const modalRow = $(`<tr data-id="${originalData.id}" data-group="${originalData.group}">
                 <td>${originalData.name}</td>
                 <td>${originalData.version}</td>
                 <td>${getStatusBadge(originalData.status)}</td>
                 <td>${originalData.purpose}</td>
+                <td><button class="btn btn-sm btn-outline-danger remove-association-btn"><i class="fas fa-times"></i></button></td>
             </tr>`);
-
-            // Add remove button for the modal view
-            const modalRow = mainTableRow.clone();
-            const removeBtn = $('<td><button class="btn btn-sm btn-outline-danger remove-association-btn"><i class="fas fa-times"></i></button></td>');
-            modalRow.append(removeBtn);
-
             $('#modal-mm-active-associations-table tbody').append(modalRow);
-
             selectedRow.remove();
             $(this).prop('disabled', true);
-            $('#mm-actions-preview-container').hide(); // Hide preview after associating
-            $('#mm-actions-list').empty();
+            $('#mm-actions-preview-container').hide();
         }
     });
     
-    // NEW: Handle disassociation for MMT
     $('#associateMMTemplateModal').on('click', '.remove-association-btn', function() {
         const rowToRemove = $(this).closest('tr');
         const mmId = rowToRemove.data('id');
         const mmData = mockData.mm_associations.find(mm => mm.id === mmId);
-
         if(mmData) {
             const newAvailableRow = $(`<tr data-name="${mmData.name}">
                 <td><input type="radio" name="associateMMSelect" value="${mmData.name}"></td>
@@ -1199,24 +1233,34 @@ $(document).ready(function() {
             </tr>`);
             $('#mm-available-templates-table tbody').append(newAvailableRow);
         }
-        
         rowToRemove.remove();
     });
 
     $('#save-mm-associations-btn').on('click', function() {
         const mainAssociatedBody = $('#active-mmt-table tbody');
         mainAssociatedBody.empty();
+        let finalActions = [];
+
         $('#modal-mm-active-associations-table tbody tr').each(function() {
-            const clonedRow = $(this).clone();
+            const row = $(this);
+            const mmId = row.data('id');
+            const clonedRow = row.clone();
             clonedRow.find('td:last-child').remove();
             mainAssociatedBody.append(clonedRow);
+            
+            // Add actions from this MM to the final list
+            const mmData = mockData.mm_associations.find(mm => mm.id === mmId);
+            if (mmData && mmData.actions) {
+                mmData.actions.forEach(action => {
+                    finalActions.push({...action, parentMmId: mmId });
+                });
+            }
         });
+
+        populateImportedActionsTable(finalActions);
         $('#associateMMTemplateModal').modal('hide');
     });
 
-    $('#toggle-mm-historical-btn').on('click', function() {
-        $('#active-mmt-table, #mmt-historical-container').toggleClass('d-none');
-    });
 });
 </script>
 
