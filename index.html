@@ -43,13 +43,13 @@
         /* --- SIDE-BY-SIDE VIEW STYLES (FOR MODAL) --- */
         #associateTemplateModal .modal-dialog,
         #associateMMTemplateModal .modal-dialog {
-            max-width: 90%; /* Make modal wider */
+            max-width: 98%; /* Make modal wider for edge-to-edge feel */
         }
         .association-panel {
             border: 1px solid #dee2e6;
             border-radius: .25rem;
             padding: 1.5rem;
-            height: 70vh; /* Make panels taller using viewport height */
+            height: 75vh; /* Make panels taller using viewport height */
         }
         .association-panel-content {
             height: 100%;
@@ -63,26 +63,42 @@
         /* --- END NEW STYLES --- */
 
         /* --- NEW: Action Preview & Clickable Row Styles --- */
-        #mm-available-templates-table tbody tr {
+        #mm-available-templates-table tbody tr,
+        #available-templates-table tbody tr {
             cursor: pointer;
         }
-        #mm-actions-preview-container h6 {
+        .actions-preview-container h6 {
             font-size: 1rem;
             color: #495057;
             margin-bottom: 0.75rem;
+            font-weight: 600;
         }
-        #mm-actions-preview-table thead th {
+        .actions-preview-table thead th {
             font-size: 0.8rem;
-            padding: 0.5rem;
+            padding: 0.5rem 0.75rem;
             background-color: #f8f9fa; /* Consistent light grey */
             position: sticky;
             top: 0;
             z-index: 1;
         }
-        #mm-actions-preview-table tbody td {
+        .actions-preview-table .segment-header {
+            background-color: #4AA4A8;
+            color: #fff;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .actions-preview-table .segment-header i {
+            margin-right: 8px;
+        }
+        .actions-preview-table tbody td {
             font-size: 0.85rem;
             vertical-align: middle;
-            padding: 0.5rem;
+            padding: 0.5rem 0.75rem;
+        }
+        .actions-preview-table a {
+            color: #4AA4A8;
+            font-weight: 600;
+            text-decoration: underline;
         }
         /* --- END NEW STYLES --- */
 
@@ -616,7 +632,9 @@
             <div class="col-md-6">
                 <div class="association-panel">
                     <div class="association-panel-content">
-                        <h5 class="mb-3">Available Templates to Associate</h5>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="mb-0">Available Templates to Associate</h5>
+                        </div>
                         <div class="mock-search-bar mb-3">
                             <input type="text" class="form-control" placeholder="Search for a template by name or purpose...">
                         </div>
@@ -632,30 +650,33 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td><input type="radio" name="associateSelect" value="Foxtrot Financial Audit"></td>
-                                        <td>Foxtrot Financial Audit</td>
-                                        <td>1.80</td>
-                                        <td><span class="badge badge-success">Published</span></td>
-                                        <td>A comprehensive process for annual financial auditing.</td>
-                                    </tr>
-                                    <tr>
-                                        <td><input type="radio" name="associateSelect" value="Golf HR Onboarding"></td>
-                                        <td>Golf HR Onboarding</td>
-                                        <td>3.20</td>
-                                        <td><span class="badge badge-success">Published</span></td>
-                                        <td>Standardized procedure for integrating new hires into the company.</td>
-                                    </tr>
-                                    <tr>
-                                        <td><input type="radio" name="associateSelect" value="Hotel IT Protocol"></td>
-                                        <td>Hotel IT Protocol</td>
-                                        <td>2.00</td>
-                                        <td><span class="badge badge-warning">In Progress</span></td>
-                                        <td>IT security and device management protocols for employees.</td>
-                                    </tr>
                                 </tbody>
                             </table>
                         </div>
+                         <div id="spt-actions-preview-container" class="actions-preview-container mt-3" style="display: none;">
+                            <h6>Actions Preview</h6>
+                            <div class="table-responsive" style="max-height: 220px; border: 1px solid #dee2e6; border-radius: .25rem;">
+                                 <table class="table table-sm mb-0 actions-preview-table" id="spt-actions-preview-table">
+                                     <thead class="thead-light">
+                                         <tr>
+                                             <th style="width: 3%;"></th>
+                                             <th style="width: 5%;">Order</th>
+                                             <th>Name</th>
+                                             <th>Status</th>
+                                             <th>Action Details</th>
+                                             <th>Version</th>
+                                             <th>IF</th>
+                                             <th>Assigned To</th>
+                                             <th>Activation Instructions</th>
+                                             <th>Precedents</th>
+                                             <th>Dependents</th>
+                                         </tr>
+                                     </thead>
+                                     <tbody id="spt-actions-table-body">
+                                     </tbody>
+                                 </table>
+                             </div>
+                         </div>
                          <div class="text-right mt-3">
                             <button type="button" class="btn btn-custom-primary" id="confirm-association-btn" disabled>Associate Selected</button>
                         </div>
@@ -708,7 +729,10 @@
             <div class="col-md-6">
                 <div class="association-panel">
                     <div class="association-panel-content">
-                        <h5 class="mb-3">Available Templates to Associate</h5>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="mb-0">Available Templates to Associate</h5>
+                            <button type="button" class="btn btn-custom-secondary-action" data-toggle="modal" data-target="#newMMPlaceholderModal">Create New MM</button>
+                        </div>
                         <div class="mock-search-bar mb-3">
                             <input type="text" class="form-control" placeholder="Search for a template by name or purpose...">
                         </div>
@@ -727,18 +751,23 @@
                                     </tbody>
                             </table>
                         </div>
-                        <div id="mm-actions-preview-container" class="mt-3" style="display: none;">
-                             <h6 class="font-weight-bold">Actions in Selected Micro-Model</h6>
-                             <div class="table-responsive" style="max-height: 180px;">
-                                 <table class="table table-sm" id="mm-actions-preview-table">
-                                     <thead>
+                        <div id="mm-actions-preview-container" class="actions-preview-container mt-3" style="display: none;">
+                            <h6>Actions Preview</h6>
+                            <div class="table-responsive" style="max-height: 220px; border: 1px solid #dee2e6; border-radius: .25rem;">
+                                 <table class="table table-sm mb-0 actions-preview-table" id="mm-actions-preview-table">
+                                     <thead class="thead-light">
                                          <tr>
-                                             <th>Action</th>
-                                             <th>Version</th>
-                                             <th>Action Type</th>
-                                             <th>Assigned to</th>
+                                             <th style="width: 3%;"></th>
+                                             <th style="width: 5%;">Order</th>
+                                             <th>Name</th>
                                              <th>Status</th>
-                                             <th>Last Modified</th>
+                                             <th>Action Details</th>
+                                             <th>Version</th>
+                                             <th>IF</th>
+                                             <th>Assigned To</th>
+                                             <th>Activation Instructions</th>
+                                             <th>Precedents</th>
+                                             <th>Dependents</th>
                                          </tr>
                                      </thead>
                                      <tbody id="mm-actions-table-body">
@@ -747,7 +776,6 @@
                              </div>
                          </div>
                          <div class="text-right mt-3">
-                            <button type="button" class="btn btn-custom-secondary-action" data-toggle="modal" data-target="#newMMPlaceholderModal">Create New MM</button>
                             <button type="button" class="btn btn-custom-primary" id="confirm-mm-association-btn" disabled>Associate Selected</button>
                         </div>
                     </div>
@@ -794,9 +822,35 @@ $(document).ready(function() {
     const mockData = {
         groups: ["Corporate", "Human Resources", "IT", "Marketing"],
         spt_associations: [
-            { id: 101, name: "Alpha Onboarding Process", version: "2.10", status: "Published", group: "Human Resources", purpose: "Standard procedure for onboarding new enterprise clients." },
-            { id: 102, name: "Bravo Client Follow-up", version: "1.50", status: "In Progress", group: "Corporate", purpose: "A sequence of actions for client retention and follow-up communication." },
-            { id: 103, name: "Charlie Quarterly Review", version: "3.00", status: "Published", group: "Corporate", purpose: "The required process for conducting quarterly business reviews with partners." }
+            {
+                id: 101, name: "Alpha Onboarding Process", version: "2.10", status: "Published", group: "Human Resources", purpose: "Standard procedure for onboarding new enterprise clients.",
+                segments: [
+                    {
+                        name: 'Client Kick-off',
+                        actions: [
+                            { order: 1, name: 'Send Welcome Packet', status: 'Published', actionDetails: '', version: 1, ifCondition: '', assignedTo: 'Account Manager', activation: '<a>On Project Activation</a>', precedents: '', dependents: '2' },
+                            { order: 2, name: 'Schedule Kick-off Call', status: 'Published', actionDetails: '', version: 1, ifCondition: '', assignedTo: 'Account Manager', activation: '<a>After pre</a>', precedents: '1', dependents: '' }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 102, name: "Bravo Client Follow-up", version: "1.50", status: "In Progress", group: "Corporate", purpose: "A sequence of actions for client retention and follow-up communication.",
+                segments: [
+                     {
+                        name: 'Follow-up Sequence',
+                        actions: [
+                            { order: 1, name: 'Check-in Call (30 days)', status: 'Published', actionDetails: '', version: 1, ifCondition: '', assignedTo: 'Support Rep', activation: '<a>After pre</a>', precedents: '', dependents: '' },
+                        ]
+                    }
+                ]
+            },
+            { id: 103, name: "Charlie Quarterly Review", version: "3.00", status: "Published", group: "Corporate", purpose: "The required process for conducting quarterly business reviews with partners.", segments: [] },
+            { id: 104, name: "Foxtrot Financial Audit", version: "1.80", status: "Published", group: "Corporate", purpose: "A comprehensive process for annual financial auditing.",
+                segments: [ { name: 'Audit Prep', actions: [ { order: 1, name: 'Gather Financials', status: 'Published', actionDetails: '', version: 1, ifCondition: '', assignedTo: 'Auditor', activation: '<a>On Project Activation</a>', precedents: '', dependents: '' }] } ]
+            },
+            { id: 105, name: "Golf HR Onboarding", version: "3.20", status: "Published", group: "Human Resources", purpose: "Standardized procedure for integrating new hires into the company.", segments: [] },
+            { id: 106, name: "Hotel IT Protocol", version: "2.00", status: "In Progress", group: "IT", purpose: "IT security and device management protocols for employees.", segments: [] }
         ],
         mm_associations: [
             { 
@@ -806,10 +860,15 @@ $(document).ready(function() {
                 status: "Published", 
                 group: "Corporate", 
                 purpose: "A micro-model for tracking outbound sales call sequences.",
-                actions: [
-                    { actionId: 301, name: 'Ensure initiation of Insurance Renewal Project', version: 1, type: 'Standard', assignedTo: 'Project Manager', status: 'draft', lastModified: '10/15/2025' },
-                    { actionId: 302, name: 'Tru Up Plug rates', version: 1, type: 'Standard', assignedTo: 'Operations Specialist', status: 'draft', lastModified: '10/15/2025' },
-                    { actionId: 303, name: 'Request Emergency Contact and Contact Info Update in Employee Navigator and TPRO', version: 1, type: 'Standard', assignedTo: 'HR Manager', status: 'draft', lastModified: '10/15/2025' }
+                segments: [
+                    {
+                        name: 'Sales Outreach',
+                        actions: [
+                           { order: 1, name: 'Initial Contact', status: 'Published', actionDetails: '', version: 1, ifCondition: '', assignedTo: 'Sales Rep', activation: '<a>On Project Activation</a>', precedents: '', dependents: '2' },
+                           { order: 2, name: 'Follow-up Email', status: 'Published', actionDetails: '', version: 1, ifCondition: '', assignedTo: 'Sales Rep', activation: '<a>After pre</a>', precedents: '1', dependents: '3' },
+                           { order: 3, name: 'Schedule Demo', status: 'Draft', actionDetails: '', version: 2, ifCondition: '', assignedTo: 'Sales Rep', activation: '<a>After pre</a>', precedents: '2', dependents: '' }
+                        ]
+                    }
                 ]
             },
             {
@@ -819,11 +878,7 @@ $(document).ready(function() {
                 status: "Published",
                 group: "IT",
                 purpose: "The process for escalating Tier 1 support tickets.",
-                 actions: [
-                    { actionId: 401, name: 'Prepare MTI Company Holiday for Next Year', version: 1, type: 'Standard', assignedTo: 'Operations Specialist', status: 'draft', lastModified: '10/15/2025' },
-                    { actionId: 402, name: 'Meet with the design team', version: 1, type: 'Standard', assignedTo: 'TP360 SME', status: 'submitted', lastModified: '10/15/2025' },
-                    { actionId: 403, name: 'Create WebEx space for SME and Development team', version: 1, type: 'Standard', assignedTo: 'TP360 Design Lead', status: 'submitted', lastModified: '10/15/2025' }
-                ]
+                 segments: []
             },
             {
                 id: 203,
@@ -832,9 +887,32 @@ $(document).ready(function() {
                 status: "Published",
                 group: "Human Resources",
                 purpose: "Handles the bi-weekly payroll approval and submission process.",
-                 actions: [
-                    { actionId: 501, name: 'Approve Payroll Draft Manifest', version: 4, type: 'Standard', assignedTo: 'Operations Manager', status: 'published', lastModified: '10/01/2025' },
-                    { actionId: 502, name: 'Post Payroll Summary to QB', version: 3, type: 'Standard', assignedTo: 'Controller', status: 'published', lastModified: '10/01/2025' }
+                 segments: [
+                    {
+                        name: 'Adopt',
+                        actions: [
+                            { order: 1, name: 'Approver', status: 'Published', actionDetails: '', version: 1, ifCondition: '111111111111222222556', assignedTo: '', activation: '<a>On Project Activation</a>', precedents: '', dependents: '2' },
+                        ]
+                    },
+                    {
+                        name: 'Design',
+                        actions: [
+                            { order: 2, name: 'Test Action 3', status: 'Published', actionDetails: '', version: 1, ifCondition: '', assignedTo: 'QA', activation: '<a>After pre</a>', precedents: '1', dependents: '3, 5' },
+                            { order: 3, name: 'test234234234UPDATE - v2', status: 'Draft', actionDetails: '', version: 2, ifCondition: '', assignedTo: '1337 PM', activation: '<a>After pre</a>', precedents: '2', dependents: '4, 5' },
+                        ]
+                    },
+                    {
+                        name: 'Dev and test',
+                        actions: [
+                             { order: 4, name: 'Approver', status: 'Published', actionDetails: '', version: 1, ifCondition: '111111111111222222556', assignedTo: '', activation: '<a>After pre</a> and <a>On Project Activation</a>', precedents: '3', dependents: '' },
+                        ]
+                    },
+                     {
+                        name: 'Development',
+                        actions: [
+                            { order: 5, name: '312 - v3', status: 'Requested_changes', actionDetails: '', version: 3, ifCondition: '', assignedTo: '1337 Basic', activation: '<a>After pre</a> and <a>On Project Activation</a>', precedents: '2, 3', dependents: '' },
+                        ]
+                    }
                 ]
             }
         ]
@@ -869,9 +947,15 @@ $(document).ready(function() {
 
     function getStatusBadge(status) {
         let badgeClass = 'badge-secondary';
+        let statusText = status;
         if (status === 'Published') badgeClass = 'badge-success';
         if (status === 'In Progress') badgeClass = 'badge-warning';
-        return `<span class="badge ${badgeClass}">${status}</span>`;
+        if (status === 'Draft') badgeClass = 'badge-info';
+        if (status === 'Requested_changes') {
+            badgeClass = 'badge-light border text-dark';
+            statusText = 'Requested ch anges';
+        }
+        return `<span class="badge ${badgeClass}">${statusText}</span>`;
     }
 
     function populateAssociationTable(tableId, data) {
@@ -892,22 +976,22 @@ $(document).ready(function() {
         });
     }
 
-    // NEW: Function to populate the imported actions table
+    // Function to populate the imported actions table
     function populateImportedActionsTable(actions) {
         const tableBody = $('#imported-actions-table tbody');
         tableBody.empty();
         if (!actions || actions.length === 0) {
-            tableBody.html('<tr><td colspan="6" class="text-center text-muted p-5">No Actions Imported. Associate a Micro-Model to add its actions.</td></tr>');
+            tableBody.html('<tr><td colspan="6" class="text-center text-muted p-5">No Actions have been imported.</td></tr>');
             return;
         }
         actions.forEach(action => {
-             const row = $(`<tr data-action-id="${action.actionId}" data-parent-mm-id="${action.parentMmId}">
+             const row = $(`<tr data-action-id="${action.order}" data-parent-mm-id="${action.parentMmId}">
                 <td><a href="#">${action.name}</a></td>
                 <td>${action.version}</td>
-                <td>${action.type}</td>
+                <td>Standard</td>
                 <td>${action.assignedTo}</td>
                 <td>${action.status}</td>
-                <td>${action.lastModified}</td>
+                <td>10/16/2025</td>
             </tr>`);
             tableBody.append(row);
         });
@@ -935,22 +1019,34 @@ $(document).ready(function() {
         });
     }
 
+    function populateAvailableSPTable() {
+        const tableBody = $('#available-templates-table tbody');
+        tableBody.empty();
+        const associatedSPTIds = [];
+        $('#active-associations-table tbody tr').each(function() {
+            associatedSPTIds.push($(this).data('id'));
+        });
+
+        mockData.spt_associations.forEach(item => {
+            if (!associatedSPTIds.includes(item.id)) {
+                 const row = $(`<tr data-name="${item.name}">
+                    <td><input type="radio" name="associateSelect" value="${item.name}"></td>
+                    <td>${item.name}</td>
+                    <td>${item.version}</td>
+                    <td>${getStatusBadge(item.status)}</td>
+                    <td>${item.purpose}</td>
+                </tr>`);
+                tableBody.append(row);
+            }
+        });
+    }
+
     // --- INITIALIZATION ---
     updateLayout();
     populateGroups();
-    populateAssociationTable('#active-associations-table', mockData.spt_associations);
+    populateAssociationTable('#active-associations-table', []); // Start with no SPT associations for this mock
+    populateImportedActionsTable([]); // Start with no imported actions
     
-    // Initial MM association and actions
-    const initialAssociatedMMs = mockData.mm_associations.filter(mm => mm.id === 201);
-    populateAssociationTable('#active-mmt-table', initialAssociatedMMs);
-    let initialActions = [];
-    initialAssociatedMMs.forEach(mm => {
-        mm.actions.forEach(action => {
-            initialActions.push({...action, parentMmId: mm.id});
-        });
-    });
-    populateImportedActionsTable(initialActions);
-
 
     // --- EVENT LISTENERS ---
     $('#process_template_process_type').on('change', function() {
@@ -1104,7 +1200,7 @@ $(document).ready(function() {
         $('#confirmChangeModal').modal('hide');
     });
 
-    // --- MODAL LOGIC ---
+    // --- MODAL LOGIC (SPT) ---
     $('#associateTemplateModal').on('show.bs.modal', function() {
         const modalAssociatedBody = $('#modal-active-associations-table tbody');
         modalAssociatedBody.empty();
@@ -1115,33 +1211,85 @@ $(document).ready(function() {
                 modalAssociatedBody.append(clonedRow);
             }
         });
+        populateAvailableSPTable();
         $('#confirm-association-btn').prop('disabled', true);
+        $('#spt-actions-preview-container').hide();
+        $('#spt-actions-table-body').empty();
+        $('#available-templates-table tbody tr').removeClass('table-active');
     });
 
-    $('#available-templates-table tbody').on('change', 'input[name="associateSelect"]', function() {
+    $('#available-templates-table tbody').on('click', 'tr', function() {
+        $(this).find('input[name="associateSelect"]').prop('checked', true);
         $('#confirm-association-btn').prop('disabled', false);
+        $(this).addClass('table-active').siblings().removeClass('table-active');
+
+        const sptName = $(this).data('name');
+        const selectedSPT = mockData.spt_associations.find(spt => spt.name === sptName);
+        const actionTableBody = $('#spt-actions-table-body');
+        actionTableBody.empty();
+
+        if (selectedSPT && selectedSPT.segments && selectedSPT.segments.length > 0) {
+            selectedSPT.segments.forEach(segment => {
+                const headerRow = $(`<tr class="segment-header"><td colspan="11"><i class="fas fa-chevron-up"></i> ${segment.name}</td></tr>`);
+                actionTableBody.append(headerRow);
+                segment.actions.forEach(action => {
+                    const actionRow = $(`<tr class="action-row">
+                        <td><input type="radio" name="actionSelect" disabled></td>
+                        <td>${action.order}</td>
+                        <td><a>${action.name}</a></td>
+                        <td>${getStatusBadge(action.status)}</td>
+                        <td>${action.actionDetails}</td>
+                        <td>${action.version}</td>
+                        <td>${action.ifCondition}</td>
+                        <td>${action.assignedTo}</td>
+                        <td>${action.activation}</td>
+                        <td>${action.precedents}</td>
+                        <td>${action.dependents}</td>
+                    </tr>`);
+                    actionTableBody.append(actionRow);
+                });
+            });
+        } else {
+            actionTableBody.append(`<tr><td colspan="11" class="text-center text-muted">No actions defined for this template.</td></tr>`);
+        }
+        $('#spt-actions-preview-container').show();
     });
 
     $('#confirm-association-btn').on('click', function() {
         const selectedRow = $('#available-templates-table tbody input[name="associateSelect"]:checked').closest('tr');
         if (selectedRow.length > 0) {
-            const newAssociatedRow = selectedRow.clone();
-            newAssociatedRow.find('td:first-child').remove();
-            newAssociatedRow.append('<td><button class="btn btn-sm btn-outline-danger remove-association-btn"><i class="fas fa-times"></i></button></td>');
+            const name = selectedRow.find('td:eq(1)').text();
+            const originalData = mockData.spt_associations.find(spt => spt.name === name);
+
+            const newAssociatedRow = $(`<tr data-id="${originalData.id}" data-group="${originalData.group}">
+                <td>${originalData.name}</td>
+                <td>${originalData.version}</td>
+                <td>${getStatusBadge(originalData.status)}</td>
+                <td>${originalData.purpose}</td>
+                <td><button class="btn btn-sm btn-outline-danger remove-association-btn"><i class="fas fa-times"></i></button></td>
+            </tr>`);
+
             $('#modal-active-associations-table tbody').append(newAssociatedRow);
             selectedRow.remove();
             $(this).prop('disabled', true);
+            $('#spt-actions-preview-container').hide();
         }
     });
     
     $('#associateTemplateModal').on('click', '.remove-association-btn', function() {
         const rowToRemove = $(this).closest('tr');
-        const availableTableBody = $('#available-templates-table tbody');
-        const name = rowToRemove.find('td:eq(0)').text();
-        const newAvailableRow = rowToRemove.clone();
-        newAvailableRow.find('td:last-child').remove();
-        newAvailableRow.prepend('<td><input type="radio" name="associateSelect" value="' + name + '"></td>');
-        availableTableBody.append(newAvailableRow);
+        const sptId = rowToRemove.data('id');
+        const sptData = mockData.spt_associations.find(spt => spt.id === sptId);
+        if(sptData) {
+            const newAvailableRow = $(`<tr data-name="${sptData.name}">
+                <td><input type="radio" name="associateSelect" value="${sptData.name}"></td>
+                <td>${sptData.name}</td>
+                <td>${sptData.version}</td>
+                <td>${getStatusBadge(sptData.status)}</td>
+                <td>${sptData.purpose}</td>
+            </tr>`);
+            $('#available-templates-table tbody').append(newAvailableRow);
+        }
         rowToRemove.remove();
     });
 
@@ -1156,6 +1304,7 @@ $(document).ready(function() {
         $('#associateTemplateModal').modal('hide');
     });
 
+    // --- MODAL LOGIC (MMT) ---
     $('#associateMMTemplateModal').on('show.bs.modal', function() {
         const modalAssociatedBody = $('#modal-mm-active-associations-table tbody');
         modalAssociatedBody.empty();
@@ -1182,22 +1331,37 @@ $(document).ready(function() {
         const actionTableBody = $('#mm-actions-table-body');
         actionTableBody.empty();
 
-        if (selectedMM && selectedMM.actions && selectedMM.actions.length > 0) {
-            selectedMM.actions.forEach(action => {
-                const row = `<tr>
-                    <td>${action.name}</td>
-                    <td>${action.version}</td>
-                    <td>${action.type}</td>
-                    <td>${action.assignedTo}</td>
-                    <td>${action.status}</td>
-                    <td>${action.lastModified}</td>
-                </tr>`;
-                actionTableBody.append(row);
+        if (selectedMM && selectedMM.segments && selectedMM.segments.length > 0) {
+            selectedMM.segments.forEach(segment => {
+                const headerRow = $(`<tr class="segment-header"><td colspan="11"><i class="fas fa-chevron-up"></i> ${segment.name}</td></tr>`);
+                actionTableBody.append(headerRow);
+                segment.actions.forEach(action => {
+                    const actionRow = $(`<tr class="action-row">
+                        <td><input type="radio" name="actionSelect" disabled></td>
+                        <td>${action.order}</td>
+                        <td><a>${action.name}</a></td>
+                        <td>${getStatusBadge(action.status)}</td>
+                        <td>${action.actionDetails}</td>
+                        <td>${action.version}</td>
+                        <td>${action.ifCondition}</td>
+                        <td>${action.assignedTo}</td>
+                        <td>${action.activation}</td>
+                        <td>${action.precedents}</td>
+                        <td>${action.dependents}</td>
+                    </tr>`);
+                    actionTableBody.append(actionRow);
+                });
             });
         } else {
-            actionTableBody.append(`<tr><td colspan="6" class="text-center text-muted">No actions defined.</td></tr>`);
+            actionTableBody.append(`<tr><td colspan="11" class="text-center text-muted">No actions defined for this template.</td></tr>`);
         }
         $('#mm-actions-preview-container').show();
+    });
+
+    $('.actions-preview-table').on('click', '.segment-header', function(){
+        const $header = $(this);
+        $header.nextUntil('.segment-header').fadeToggle(200);
+        $header.find('i').toggleClass('fa-chevron-up fa-chevron-down');
     });
 
     $('#confirm-mm-association-btn').on('click', function() {
@@ -1239,25 +1403,14 @@ $(document).ready(function() {
     $('#save-mm-associations-btn').on('click', function() {
         const mainAssociatedBody = $('#active-mmt-table tbody');
         mainAssociatedBody.empty();
-        let finalActions = [];
 
         $('#modal-mm-active-associations-table tbody tr').each(function() {
             const row = $(this);
-            const mmId = row.data('id');
             const clonedRow = row.clone();
             clonedRow.find('td:last-child').remove();
             mainAssociatedBody.append(clonedRow);
-            
-            // Add actions from this MM to the final list
-            const mmData = mockData.mm_associations.find(mm => mm.id === mmId);
-            if (mmData && mmData.actions) {
-                mmData.actions.forEach(action => {
-                    finalActions.push({...action, parentMmId: mmId });
-                });
-            }
         });
-
-        populateImportedActionsTable(finalActions);
+        
         $('#associateMMTemplateModal').modal('hide');
     });
 
