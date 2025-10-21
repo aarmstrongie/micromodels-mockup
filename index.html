@@ -1066,7 +1066,7 @@ $(document).ready(function() {
             listElement.empty();
 
             if (currentType === 'Micro-Model Process Template') {
-                warningMessage = `Changing the Group of this Micro Model to <strong>${newGroup}</strong> will break all associations to the following Standard Process Templates:`;
+                warningMessage = `Changing the Group of this Micro-Model to <strong>${newGroup}</strong> will break all associations to the following Standard Process Templates:`;
                 $('#active-associations-table tbody tr').each(function() {
                     const row = $(this);
                     if (row.data('group') !== newGroup) {
@@ -1163,7 +1163,7 @@ $(document).ready(function() {
                 }
             });
             if (associationsList.length > 0) {
-                 $('#modal-warning-text').text('Changing this Micro Model to a Standard Process Template will remove all associations to the following Standard Process Templates:');
+                 $('#modal-warning-text').text('Changing this Micro-Model to a Standard Process Template will remove all associations to the following Standard Process Templates:');
                  $('#confirmChangeModal').data('table-to-clear', '#active-associations-table tbody');
                  $('#associations-list').html(associationsList);
                  $('#confirmChangeModal').modal('show');
@@ -1175,7 +1175,7 @@ $(document).ready(function() {
                 }
             });
             if (associationsList.length > 0) {
-                $('#modal-warning-text').text('Changing this Standard Process Template to a Micro Model Template will remove all associations to the following Micro Model Templates:');
+                $('#modal-warning-text').text('Changing this Standard Process Template to a Micro-Model Template will remove all associations to the following Micro-Model Templates:');
                 $('#confirmChangeModal').data('table-to-clear', '#mmt-associations-tbody');
                 $('#associations-list').html(associationsList);
                 $('#confirmChangeModal').modal('show');
