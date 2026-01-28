@@ -220,6 +220,11 @@
             border-color: #5a6268;
             color: #fff;
         }
+        
+        /* New Wrapper style for Disabled Save Tooltip */
+        .save-btn-wrapper {
+            display: inline-block;
+        }
     </style>
 </head>
 <body>
@@ -310,7 +315,7 @@
         </a>
       </li>
       <li class="nav-item" id="nav-item-spt">
-        <a class="nav-link" id="nav-associated-templates-tab" data-toggle="tab" href="#nav-associated-templates" role="tab" aria-controls="nav-associated-templates" aria-selected="false">
+        <a class="nav-link" id="nav-associated-templates-tab" data-toggle="tab" href="#nav-associated-templates" role="tab" aria-controls="nav-associated-templates" aria-selected="false" data-toggle="tooltip" data-placement="top" title="This Micro-Model can be associated with multiple Standard Process Templates simultaneously.">
           Associated Standard Process Templates
         </a>
       </li>
@@ -378,7 +383,7 @@
             </div>
 
             <div id="segments-container" class="d-none">
-                 <table class="table table-hover">
+                 <table class="table table-hover" id="segments-list-table">
                     <thead class="thead-light">
                         <tr>
                             <th>Segment Name</th>
@@ -387,24 +392,9 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td><strong>Initialization Phase</strong></td>
-                            <td>3</td>
-                            <td>Setup and preliminary checks.</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Execution Phase</strong></td>
-                            <td>5</td>
-                            <td>Core processing tasks.</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Closure Phase</strong></td>
-                            <td>2</td>
-                            <td>Final review and sign-off.</td>
-                        </tr>
-                    </tbody>
+                        </tbody>
                  </table>
-                 <button class="btn btn-custom-secondary-action btn-sm"><i class="fas fa-plus"></i> Add Segment</button>
+                 <button class="btn btn-custom-secondary-action btn-sm" data-toggle="modal" data-target="#selectSegmentModal"><i class="fas fa-plus"></i> Add Segment</button>
             </div>
         </div>
       </div>
@@ -448,7 +438,7 @@
                         <tr>
                             <td>Delta Project Kickoff</td>
                             <td>1.20</td>
-                            <td><span class="badge badge-danger">Archived</span></td>
+                            <td><span class="badge badge-secondary">discrepancy_resolution</span></td>
                             <td>2025-03-15</td>
                             <td>Legacy kickoff process, now replaced by Alpha Onboarding.</td>
                         </tr>
@@ -496,7 +486,7 @@
                         <tr>
                             <td>Kappa Test Model</td>
                             <td>1.00</td>
-                            <td><span class="badge badge-danger">Archived</span></td>
+                            <td><span class="badge badge-success">Published</span></td>
                             <td>2025-08-10</td>
                             <td>Model was deprecated and replaced.</td>
                         </tr>
@@ -591,8 +581,12 @@
 <div class="bottom-nav">
       <div class="container d-flex justify-content-between">
             <div>
-                <button type="submit" form="edit_process_template_4145" class="btn btn-custom-secondary-action">Save</button>
-                <button type="submit" form="edit_process_template_4145" class="btn btn-custom-secondary-action">Save and Close</button>
+                <div class="save-btn-wrapper" id="save-btn-wrapper" data-toggle="tooltip" title="">
+                    <button type="submit" form="edit_process_template_4145" class="btn btn-custom-secondary-action" id="main-save-btn">Save</button>
+                </div>
+                <div class="save-btn-wrapper" id="save-close-btn-wrapper" data-toggle="tooltip" title="">
+                    <button type="submit" form="edit_process_template_4145" class="btn btn-custom-secondary-action" id="main-save-close-btn">Save and Close</button>
+                </div>
                 <button type="button" class="btn btn-custom-secondary-action">Make a Copy</button>
             </div>
             <div>
@@ -647,6 +641,39 @@
     </div>
 </div>
 
+<div class="modal fade" id="selectSegmentModal" tabindex="-1" role="dialog" aria-labelledby="selectSegmentModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="selectSegmentModalLabel">Select a Segment</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Please select at least one segment to enable segments for this Micro-Model.</p>
+        <form id="segment-selection-form">
+            <div class="custom-control custom-checkbox mb-2">
+                <input type="checkbox" class="custom-control-input" id="segCheck1" value="Initialization Phase">
+                <label class="custom-control-label" for="segCheck1">Initialization Phase (Actions: 3)</label>
+            </div>
+            <div class="custom-control custom-checkbox mb-2">
+                <input type="checkbox" class="custom-control-input" id="segCheck2" value="Execution Phase">
+                <label class="custom-control-label" for="segCheck2">Execution Phase (Actions: 5)</label>
+            </div>
+            <div class="custom-control custom-checkbox mb-2">
+                <input type="checkbox" class="custom-control-input" id="segCheck3" value="Closure Phase">
+                <label class="custom-control-label" for="segCheck3">Closure Phase (Actions: 2)</label>
+            </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-custom-secondary" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-custom-primary" id="confirm-segment-selection-btn">Confirm & Add</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <div class="modal fade" id="associateTemplateModal" tabindex="-1" role="dialog" aria-labelledby="associateTemplateModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-xl" role="document">
@@ -870,39 +897,42 @@
 <script>
 $(document).ready(function() {
 
+    // Initialize Bootstrap Tooltips
+    $('[data-toggle="tooltip"]').tooltip();
+
     // --- MOCK DATA ---
     const mockData = {
         groups: ["Corporate", "Human Resources", "IT", "Marketing"],
         spt_associations: [
             {
-                id: 101, name: "Alpha Onboarding Process", version: "2.10", status: "Published", group: "Human Resources", purpose: "Standard procedure for onboarding new enterprise clients.",
+                id: 101, name: "Alpha Onboarding Process", version: "2.10", status: "published", group: "Human Resources", purpose: "Standard procedure for onboarding new enterprise clients.",
                 segments: [
                     {
                         name: 'Client Kick-off',
                         actions: [
-                            { order: 1, name: 'Send Welcome Packet', status: 'Published', actionDetails: '', version: 1, ifCondition: '', assignedTo: 'Account Manager', activation: '<a>On Project Activation</a>', precedents: '', dependents: '2' },
-                            { order: 2, name: 'Schedule Kick-off Call', status: 'Published', actionDetails: '', version: 1, ifCondition: '', assignedTo: 'Account Manager', activation: '<a>After pre</a>', precedents: '1', dependents: '' }
+                            { order: 1, name: 'Send Welcome Packet', status: 'published', actionDetails: '', version: 1, ifCondition: '', assignedTo: 'Account Manager', activation: '<a>On Project Activation</a>', precedents: '', dependents: '2' },
+                            { order: 2, name: 'Schedule Kick-off Call', status: 'published', actionDetails: '', version: 1, ifCondition: '', assignedTo: 'Account Manager', activation: '<a>After pre</a>', precedents: '1', dependents: '' }
                         ]
                     }
                 ]
             },
             {
-                id: 102, name: "Bravo Client Follow-up", version: "1.50", status: "In Progress", group: "Corporate", purpose: "A sequence of actions for client retention and follow-up communication.",
+                id: 102, name: "Bravo Client Follow-up", version: "1.50", status: "draft", group: "Corporate", purpose: "A sequence of actions for client retention and follow-up communication.",
                 segments: [
                      {
                         name: 'Follow-up Sequence',
                         actions: [
-                            { order: 1, name: 'Check-in Call (30 days)', status: 'Published', actionDetails: '', version: 1, ifCondition: '', assignedTo: 'Support Rep', activation: '<a>After pre</a>', precedents: '', dependents: '' },
+                            { order: 1, name: 'Check-in Call (30 days)', status: 'published', actionDetails: '', version: 1, ifCondition: '', assignedTo: 'Support Rep', activation: '<a>After pre</a>', precedents: '', dependents: '' },
                         ]
                     }
                 ]
             },
-            { id: 103, name: "Charlie Quarterly Review", version: "3.00", status: "Published", group: "Corporate", purpose: "The required process for conducting quarterly business reviews with partners.", segments: [] },
-            { id: 104, name: "Foxtrot Financial Audit", version: "1.80", status: "Published", group: "Corporate", purpose: "A comprehensive process for annual financial auditing.",
-                segments: [ { name: 'Audit Prep', actions: [ { order: 1, name: 'Gather Financials', status: 'Published', actionDetails: '', version: 1, ifCondition: '', assignedTo: 'Auditor', activation: '<a>On Project Activation</a>', precedents: '', dependents: '' }] } ]
+            { id: 103, name: "Charlie Quarterly Review", version: "3.00", status: "published", group: "Corporate", purpose: "The required process for conducting quarterly business reviews with partners.", segments: [] },
+            { id: 104, name: "Foxtrot Financial Audit", version: "1.80", status: "published", group: "Corporate", purpose: "A comprehensive process for annual financial auditing.",
+                segments: [ { name: 'Audit Prep', actions: [ { order: 1, name: 'Gather Financials', status: 'published', actionDetails: '', version: 1, ifCondition: '', assignedTo: 'Auditor', activation: '<a>On Project Activation</a>', precedents: '', dependents: '' }] } ]
             },
-            { id: 105, name: "Golf HR Onboarding", version: "3.20", status: "Published", group: "Human Resources", purpose: "Standardized procedure for integrating new hires into the company.", segments: [] },
-            { id: 106, name: "Hotel IT Protocol", version: "2.00", status: "In Progress", group: "IT", purpose: "IT security and device management protocols for employees.", segments: [] }
+            { id: 105, name: "Golf HR Onboarding", version: "3.20", status: "published", group: "Human Resources", purpose: "Standardized procedure for integrating new hires into the company.", segments: [] },
+            { id: 106, name: "Hotel IT Protocol", version: "2.00", status: "draft", group: "IT", purpose: "IT security and device management protocols for employees.", segments: [] }
         ],
         mm_associations: [
             { 
@@ -927,7 +957,7 @@ $(document).ready(function() {
                 id: 202,
                 name: "Epsilon Support Ticket",
                 version: "2.00",
-                status: "Published",
+                status: "Published", 
                 group: "IT",
                 purpose: "The process for escalating Tier 1 support tickets.",
                  segments: []
@@ -936,7 +966,7 @@ $(document).ready(function() {
                 id: 203,
                 name: "Omega Payroll Process",
                 version: "1.50",
-                status: "Published",
+                status: "Published", 
                 group: "Human Resources",
                 purpose: "Handles the bi-weekly payroll approval and submission process.",
                  segments: [
@@ -1000,12 +1030,18 @@ $(document).ready(function() {
     function getStatusBadge(status) {
         let badgeClass = 'badge-secondary';
         let statusText = status;
-        if (status === 'Published') badgeClass = 'badge-success';
-        if (status === 'In Progress') badgeClass = 'badge-warning';
-        if (status === 'Draft') badgeClass = 'badge-info';
-        if (status === 'Requested_changes') {
+        const lowerStatus = status.toLowerCase();
+
+        if (lowerStatus === 'published') badgeClass = 'badge-success';
+        if (lowerStatus === 'draft') badgeClass = 'badge-info';
+        if (lowerStatus === 'approved') badgeClass = 'badge-primary';
+        if (lowerStatus === 'requested_changes') {
             badgeClass = 'badge-light border text-dark';
-            statusText = 'Requested ch anges';
+            statusText = 'Requested changes';
+        }
+        if (lowerStatus === 'discrepancy_resolution') {
+            badgeClass = 'badge-secondary';
+            statusText = 'discrepancy_resolution';
         }
         return `<span class="badge ${badgeClass}">${statusText}</span>`;
     }
@@ -1102,14 +1138,77 @@ $(document).ready(function() {
 
     // --- EVENT LISTENERS ---
     
+    // VALIDATE SEGMENT SELECTION
+    function validateSegments() {
+        const isSegmentsEnabled = $('#enableSegmentsToggle').is(':checked');
+        const hasSegments = $('#segments-list-table tbody tr').length > 0;
+        const saveBtns = $('#main-save-btn, #main-save-close-btn');
+        const wrappers = $('.save-btn-wrapper');
+
+        if (isSegmentsEnabled && !hasSegments) {
+            saveBtns.prop('disabled', true);
+            wrappers.attr('data-original-title', 'At least one Segment must be selected.').tooltip('update');
+        } else {
+            saveBtns.prop('disabled', false);
+            wrappers.attr('data-original-title', '').tooltip('update');
+        }
+    }
+
     // Enable Segments Toggle Listener
     $('#enableSegmentsToggle').on('change', function() {
         if ($(this).is(':checked')) {
+            // Requirement: Immediately open selection page (Modal)
+            $('#selectSegmentModal').modal('show');
+            
             $('#segments-placeholder').addClass('d-none');
             $('#segments-container').removeClass('d-none');
+            // Disable save immediately as no segments are selected yet
+            validateSegments(); 
         } else {
             $('#segments-placeholder').removeClass('d-none');
             $('#segments-container').addClass('d-none');
+            // Clear segments table when toggled off (optional but clean)
+            $('#segments-list-table tbody').empty();
+            validateSegments();
+        }
+    });
+
+    // Handle Confirming Segment Selection
+    $('#confirm-segment-selection-btn').on('click', function() {
+        const selected = [];
+        $('#segment-selection-form input:checked').each(function() {
+            selected.push({
+                name: $(this).val(),
+                count: $(this).parent().text().match(/Actions: (\d+)/)[1],
+                desc: 'Mock description for ' + $(this).val()
+            });
+        });
+
+        const tbody = $('#segments-list-table tbody');
+        // Don't empty if appending, but here we assume single selection flow for mock simplicity
+        // or check for duplicates. For this mock, we just clear and re-add.
+        // tbody.empty(); 
+        
+        selected.forEach(seg => {
+            // Check for duplicates
+            if(tbody.find(`td:contains("${seg.name}")`).length === 0) {
+                 tbody.append(`<tr>
+                    <td><strong>${seg.name}</strong></td>
+                    <td>${seg.count}</td>
+                    <td>${seg.desc}</td>
+                </tr>`);
+            }
+        });
+
+        $('#selectSegmentModal').modal('hide');
+        validateSegments();
+    });
+
+    // Handle Modal Close/Cancel without selection (Revert Toggle)
+    $('#selectSegmentModal').on('hidden.bs.modal', function () {
+        // If no segments are in the table, revert the toggle
+        if ($('#segments-list-table tbody tr').length === 0) {
+            $('#enableSegmentsToggle').prop('checked', false).trigger('change');
         }
     });
 
