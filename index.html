@@ -300,6 +300,11 @@
         </a>
       </li>
       <li class="nav-item">
+        <a class="nav-link" id="nav-guidelines-tab" data-toggle="tab" href="#nav-guidelines" role="tab" aria-controls="nav-guidelines" aria-selected="false">
+          Guidelines
+        </a>
+      </li>
+      <li class="nav-item">
         <a class="nav-link" id="nav-segments-tab" data-toggle="tab" href="#nav-segments" role="tab" aria-controls="nav-segments" aria-selected="false">
           Segments
         </a>
@@ -351,10 +356,56 @@
         </div>
       </div>
 
+      <div class="tab-pane fade" id="nav-guidelines" role="tabpanel" aria-labelledby="nav-guidelines-tab">
+        <div class="p-3">
+            <h5>Guidelines</h5>
+            <p class="text-muted">Guidelines content (TT2320) goes here.</p>
+        </div>
+      </div>
+
       <div class="tab-pane fade" id="nav-segments" role="tabpanel" aria-labelledby="nav-segments-tab">
         <div class="p-3">
-            <h5>Associated Segments</h5>
-            <p class="text-muted-color"><i>No Associated segments Yet!</i></p>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5>Associated Segments</h5>
+                <div class="custom-control custom-switch">
+                    <input type="checkbox" class="custom-control-input" id="enableSegmentsToggle">
+                    <label class="custom-control-label" for="enableSegmentsToggle">Enable Segments</label>
+                </div>
+            </div>
+            
+            <div id="segments-placeholder">
+                <p class="text-muted-color"><i>No Associated segments Yet!</i></p>
+            </div>
+
+            <div id="segments-container" class="d-none">
+                 <table class="table table-hover">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>Segment Name</th>
+                            <th>Actions Count</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Initialization Phase</strong></td>
+                            <td>3</td>
+                            <td>Setup and preliminary checks.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Execution Phase</strong></td>
+                            <td>5</td>
+                            <td>Core processing tasks.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Closure Phase</strong></td>
+                            <td>2</td>
+                            <td>Final review and sign-off.</td>
+                        </tr>
+                    </tbody>
+                 </table>
+                 <button class="btn btn-custom-secondary-action btn-sm"><i class="fas fa-plus"></i> Add Segment</button>
+            </div>
         </div>
       </div>
 
@@ -413,6 +464,7 @@
             <h4>Associated Templates</h4>
             <div>
                 <button type="button" class="btn btn-custom-secondary" id="toggle-mm-historical-btn"><i class="fas fa-filter mr-1"></i> Show Historical Associations</button>
+                <button type="button" class="btn btn-custom-secondary-action mr-1" data-toggle="modal" data-target="#newMMPlaceholderModal"><i class="fas fa-plus mr-1"></i> Create New Micro-Model</button>
                 <button type="button" class="btn btn-custom-primary" data-toggle="modal" data-target="#associateMMTemplateModal"><i class="fas fa-plus mr-1"></i> Associate Micro-Model Template</button>
             </div>
             </div>
@@ -588,7 +640,7 @@
                     </ul>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-custom-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" id="cancel-group-change-btn" class="btn btn-custom-secondary" data-dismiss="modal">Cancel</button>
                 <button type="button" id="confirm-group-change-btn" class="btn btn-custom-danger">Agree - Change Group</button>
             </div>
         </div>
@@ -1049,15 +1101,28 @@ $(document).ready(function() {
     
 
     // --- EVENT LISTENERS ---
+    
+    // Enable Segments Toggle Listener
+    $('#enableSegmentsToggle').on('change', function() {
+        if ($(this).is(':checked')) {
+            $('#segments-placeholder').addClass('d-none');
+            $('#segments-container').removeClass('d-none');
+        } else {
+            $('#segments-placeholder').removeClass('d-none');
+            $('#segments-container').addClass('d-none');
+        }
+    });
+
     $('#process_template_process_type').on('change', function() {
         updateLayout();
         updateProcessTypeView();
     });
 
-    mainForm.on('submit', function(event) {
-        event.preventDefault();
-        const newGroup = groupSelect.val();
-
+    // Handle group change event immediately
+    groupSelect.on('change', function() {
+        const newGroup = $(this).val();
+        
+        // If the group has changed from the originally loaded or last confirmed group
         if (newGroup !== originalGroup) {
             const currentType = $('#process_template_process_type').val();
             let conflictingTemplates = [];
@@ -1066,37 +1131,48 @@ $(document).ready(function() {
             listElement.empty();
 
             if (currentType === 'Micro-Model Process Template') {
-                warningMessage = `Changing the Group of this Micro-Model to <strong>${newGroup}</strong> will break all associations to the following Standard Process Templates:`;
+                // Check conflicts for MM Process Template (looking at SPT associations)
                 $('#active-associations-table tbody tr').each(function() {
                     const row = $(this);
-                    if (row.data('group') !== newGroup) {
+                    if (row.data('group') && row.data('group') !== newGroup) {
                         conflictingTemplates.push({ id: row.data('id'), name: row.find('td:eq(0)').text(), version: row.find('td:eq(1)').text(), type: 'spt' });
                     }
                 });
-            } else { // Standard Process Template
-                warningMessage = `Changing the Group of this Standard Process Template to <strong>${newGroup}</strong> will break the associations to the following Micro-Model Templates:`;
+            } else { 
+                // Check conflicts for Standard Process Template (looking at MM associations)
                 $('#active-mmt-table tbody tr').each(function() {
                     const row = $(this);
-                    if (row.data('group') !== newGroup) {
+                    if (row.data('group') && row.data('group') !== newGroup) {
                          conflictingTemplates.push({ id: row.data('id'), name: row.find('td:eq(0)').text(), version: row.find('td:eq(1)').text(), type: 'mm' });
                     }
                 });
             }
 
             if (conflictingTemplates.length > 0) {
+                if (currentType === 'Micro-Model Process Template') {
+                    warningMessage = `Changing the Group of this Micro-Model to <strong>${newGroup}</strong> will break all associations to the following Standard Process Templates:`;
+                } else {
+                    warningMessage = `Changing the Group of this Standard Process Template to <strong>${newGroup}</strong> will break the associations to the following Micro-Model Templates:`;
+                }
+
                 $('#group-change-warning-message').html(warningMessage);
                 conflictingTemplates.forEach(t => {
                     listElement.append(`<li class="list-group-item" data-id="${t.id}" data-type="${t.type}">${t.name}, Version ${t.version}</li>`);
                 });
                 $('#groupChangeWarningModal').modal('show');
             } else {
-                performSave(event.originalEvent.submitter);
+                // No conflict, just update the tracker
+                originalGroup = newGroup;
             }
-        } else {
-            performSave(event.originalEvent.submitter);
         }
     });
 
+    // If user cancels the group change, revert the dropdown
+    $('#cancel-group-change-btn').on('click', function() {
+        groupSelect.val(originalGroup);
+    });
+
+    // If user confirms the group change, remove associations and update tracker
     $('#confirm-group-change-btn').on('click', function() {
         const newGroup = groupSelect.val();
         $('#group-change-break-list li').each(function() {
@@ -1109,12 +1185,15 @@ $(document).ready(function() {
             } else {
                 $(`#active-mmt-table tbody tr[data-id="${id}"]`).remove();
             }
-             console.log(`(Simulated) Association with ID ${id} removed.`);
         });
-
+        // Update the originalGroup to the new valid one so subsequent checks work against this new state
         originalGroup = newGroup;
         $('#groupChangeWarningModal').modal('hide');
-        performSave();
+    });
+
+    mainForm.on('submit', function(event) {
+        event.preventDefault();
+        performSave(event.originalEvent.submitter);
     });
 
     function performSave(submitter) {
